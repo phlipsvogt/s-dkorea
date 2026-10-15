@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yeojeong — South Korea Travel Atlas from Inha University</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- STICKY HEADER -->
+  <header class="top-nav">
+    <div class="nav-container">
+      <a href="#" class="brand" onclick="resetAllFilters(); return false;">
+        <div class="brand-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        </div>
+        <div>
+          <span class="brand-title">Yeojeong</span>
+          <span class="brand-sub">Korea Travel Atlas • Starting from Inha University</span>
+        </div>
+      </a>
+
+      <div class="search-wrapper">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Suche nach 220 Orten, Hangul (인하대, 송도, 성수), Tipps oder Aktivitäten..." oninput="handleSearch(this.value)" />
+        <button id="searchClear" class="search-clear" onclick="clearSearch()" title="Suche löschen">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="nav-actions">
+        <button class="nav-btn active" id="viewBtnSplit" onclick="setViewMode('split')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          Atlas + Karte
+        </button>
+        <button class="nav-btn" id="viewBtnMap" onclick="setViewMode('map')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          Interaktive Karte
+        </button>
+        <button class="nav-btn" id="viewBtnGrid" onclick="setViewMode('grid')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Nur Grid
+        </button>
+        <button class="nav-btn" id="viewBtnTable" onclick="setViewMode('table')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Tabelle
+        </button>
+        <button class="nav-btn" id="viewBtnVideos" onclick="setViewMode('videos')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          4K Videos
+        </button>
+        <button class="nav-btn" id="viewBtnSaved" onclick="toggleSavedFilter()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          Merkliste
+          <span class="badge-count" id="savedCountBadge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CATEGORY & REGION FILTER STRIP -->
+  <section class="filter-strip">
+    <div class="filter-container">
+      <div class="category-pills" id="categoryPills">
+        <button class="cat-pill active" data-cat="all" onclick="setCategory('all')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Alle Orte (220)
+        </button>
+        <button class="cat-pill" data-cat="inha" onclick="setCategory('inha')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Inha & Incheon Local
+        </button>
+        <button class="cat-pill" data-cat="gems" onclick="setCategory('gems')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Hidden Gems (Blog-Tipps)
+        </button>
+        <button class="cat-pill" data-cat="Cafes & Bakery" onclick="setCategory('Cafes & Bakery')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          Cafes & Bakery
+        </button>
+        <button class="cat-pill" data-cat="Food & Markets" onclick="setCategory('Food & Markets')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+          Food & Markets
+        </button>
+        <button class="cat-pill" data-cat="Nature & Coast" onclick="setCategory('Nature & Coast')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+          Nature & Coast
+        </button>
+        <button class="cat-pill" data-cat="Culture & History" onclick="setCategory('Culture & History')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+          Culture & History
+        </button>
+        <button class="cat-pill" data-cat="Architecture & Views" onclick="setCategory('Architecture & Views')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Photo Spots & Views
+        </button>
+        <button class="cat-pill" data-cat="Islands & Day Trips" onclick="setCategory('Islands & Day Trips')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="16" rx="2"/><path d="M4 11h16"/><path d="M12 3v8"/><path d="m8 19-2 3"/><path d="m18 22-2-3"/><path d="M8 15h0"/><path d="M16 15h0"/></svg>
+          Islands & Day Trips
+        </button>
+        <button class="cat-pill" data-cat="Nightlife & Vibes" onclick="setCategory('Nightlife & Vibes')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          Nightlife & Vibes
+        </button>
+      </div>
+
+      <div class="sub-filters">
+        <div class="filter-group">
+          <select id="regionSelect" class="filter-select" onchange="applyFilters()">
+            <option value="all">Region: Alle Regionen (Südkorea)</option>
+            <option value="Inha & Michuhol-gu">Inha Uni & Michuhol-gu (Direkte Umgebung)</option>
+            <option value="Incheon & Songdo">Incheon Core, Songdo, Open Port & Bupyeong</option>
+            <option value="Incheon Islands">Incheon Inseln (Yeongjongdo, Muuido, Ganghwado)</option>
+            <option value="Suin-Bundang & Gyeonggi">Suin-Bundang Line & Gyeonggi-do (Suwon, Oido, Paju)</option>
+            <option value="Seoul">Seoul (Paläste, Hanok, Seongsu, Hongdae, Hangang)</option>
+            <option value="Gangwon & East Coast">Gangwon-do & Ostküste (Sokcho, Gangneung, Yangyang)</option>
+            <option value="Jeolla & Chungcheong">Jeolla & Chungcheong (Jeonju, Suncheon, Yeosu, Daejeon)</option>
+            <option value="Gyeongju & Gyeongsang">Gyeongju, Andong, Pohang & Namhae</option>
+            <option value="Busan">Busan (Haeundae, Gwangalli, Gamcheon)</option>
+            <option value="Jeju Island">Jeju Island (Seongsan, Hallasan, Udo, Aewol)</option>
+          </select>
+
+          <select id="durationSelect" class="filter-select" onchange="applyFilters()">
+            <option value="all">Anreise ab Inha Uni: Alle Distanzen</option>
+            <option value="under30">Unter 30 Min ab Inha (Walk / Suin Line / Bus)</option>
+            <option value="under60">30 bis 60 Min ab Inha (Incheon / West-Seoul / Suwon)</option>
+            <option value="daytrip">Tagestrip (1 bis 2,5 Std.)</option>
+            <option value="weekend">Wochenend-Trip (KTX / Express Bus / Flug)</option>
+          </select>
+
+          <select id="costSelect" class="filter-select" onchange="applyFilters()">
+            <option value="all">Budget: Alle Preisklassen</option>
+            <option value="Kostenlos">Kostenlos (Free Entry)</option>
+            <option value="₩ (Günstig)">₩ (Studentenfreundlich / Günstig)</option>
+            <option value="₩₩ (Mittel)">₩₩ (Mittel)</option>
+            <option value="₩₩₩ (Gehoben)">₩₩₩ (Gehoben / Resort / Ticket)</option>
+          </select>
+
+          <select id="sortSelect" class="filter-select" onchange="applyFilters()">
+            <option value="default">Sortierung: Kuratiert ab Inha Uni</option>
+            <option value="rating">Höchste Bewertung zuerst</option>
+            <option value="name">Alphabetisch (A–Z)</option>
+          </select>
+        </div>
+
+        <div class="stats-bar">
+          <span class="photo-engine-status" id="photoEngineStatus">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            Echte Ortsfotos aktiv
+          </span>
+          <span id="resultsCounter">Zeige 220 von 220 Reisezielen</span>
+          <button class="copy-kr-btn" onclick="resetAllFilters()" style="text-decoration: underline;">Filter zurücksetzen</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- MAIN CONTENT + RIGHT INTERACTIVE MAP & ROUTE DOCK -->
+  <main class="main-layout" id="mainLayout">
+    <div id="leftContentCol">
+      <!-- GRID VIEW -->
+      <div class="cards-grid" id="cardsGrid"></div>
+
+      <!-- COMPACT TABLE VIEW -->
+      <div class="directory-table-wrap" id="tableView">
+        <table class="atlas-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ort & Koreanischer Name (Hangul)</th>
+              <th>Region</th>
+              <th>Kategorie</th>
+              <th>Ab Inha Uni</th>
+              <th>Budget</th>
+              <th>Karte & Fotos</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- 4K VIDEO LOUNGE VIEW -->
+      <div class="video-grid" id="videoView">
+        <div class="video-card">
+          <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/1ZK348wy5Eg" title="Seoul to Incheon Travel Guide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Incheon & Greater Seoul Highlights</h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">Visueller Guide durch Songdo Central Park, Open Port Chinatown, Wolmido und die direkten Verbindungen nach Seoul.</p>
+        </div>
+        <div class="video-card">
+          <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ZMCX1kvw91g" title="Incheon Gaehangro Retro Street" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Incheon Gaehangro (개항로) Retro Hipster Tour</h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">Einblick in die umgebauten Kliniken, das Ilkwang Lightbulb Cafe und die lokalen Lokale nur 15 Minuten von der Inha Uni entfernt.</p>
+        </div>
+        <div class="video-card">
+          <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/orqx67XLfDo" title="Ganghwado & Yeongjongdo Cafe Tour" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Ganghwado & Yeongjongdo Island Cafes</h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">Die schönsten Küsten- und Fabrik-Cafés (inkl. Joyangbangjik) auf den Inseln vor Incheon.</p>
+        </div>
+        <div class="video-card">
+          <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/yBGtdnfdte0" title="South Korea Nationwide Highlights" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+          <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">South Korea Nationwide: Seoul, Busan, Jeju & Incheon</h3>
+          <p style="font-size:0.84rem; color:var(--text-secondary);">Inspiration für deine Wochenend- und Semesterferien-Trips quer durch Südkorea.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT DOCK: INTERACTIVE MAP + ROUTE PLANNER FROM INHA UNIVERSITY -->
+    <aside class="right-dock" id="rightDock">
+      <div class="dock-tabs">
+        <button class="dock-tab active" id="dockTabMap" onclick="switchDockTab('map')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+          Interaktive Karte (<span id="mapPinCount">220</span>)
+        </button>
+        <button class="dock-tab" id="dockTabRoute" onclick="switchDockTab('route')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
+          Inha Routenplaner
+        </button>
+      </div>
+
+      <!-- MAP PANEL -->
+      <div id="mapDockPanel">
+        <div class="map-toolbar">
+          <div style="display:flex; flex-wrap:wrap; gap:4px;">
+            <button class="map-jump-btn" onclick="jumpMap(37.4536, 126.6629, 16)">Start: Yongil</button>
+            <button class="map-jump-btn" onclick="jumpMap(37.4350, 126.6450, 12)">Incheon & Songdo</button>
+            <button class="map-jump-btn" onclick="jumpMap(37.5600, 126.4400, 10)">Inseln</button>
+            <button class="map-jump-btn" onclick="jumpMap(37.2850, 127.0150, 12)">Suwon</button>
+            <button class="map-jump-btn" onclick="jumpMap(37.5550, 126.9850, 12)">Seoul</button>
+            <button class="map-jump-btn" onclick="jumpMap(35.1500, 129.1100, 11)">Busan</button>
+            <button class="map-jump-btn" onclick="jumpMap(33.3800, 126.5500, 10)">Jeju</button>
+            <button class="map-jump-btn" onclick="fitMapToFiltered()">Alle Gefilterten</button>
+          </div>
+          <select id="mapStyleSelect" class="filter-select" style="padding:3px 7px; font-size:0.72rem;" onchange="changeMapTiles(this.value)">
+            <option value="mapbox_streets" selected>Karte: Mapbox Retina Streets (Standard)</option>
+            <option value="mapbox_light">Karte: Mapbox Clean Light</option>
+            <option value="mapbox_outdoors">Karte: Mapbox Outdoors & Natur</option>
+            <option value="mapbox_sat">Karte: Mapbox Satellit HD</option>
+            <option value="esri">Karte: Esri World Atlas</option>
+          </select>
+        </div>
+
+        <div id="interactiveMap"></div>
+
+        <div class="map-legend">
+          <span><span class="legend-dot" style="background:#DC2626;"></span>Inha Uni (Start)</span>
+          <span><span class="legend-dot" style="background:#D97706;"></span>Cafes</span>
+          <span><span class="legend-dot" style="background:#EA580C;"></span>Food</span>
+          <span><span class="legend-dot" style="background:#059669;"></span>Natur</span>
+          <span><span class="legend-dot" style="background:#7C3AED;"></span>Kultur</span>
+          <span><span class="legend-dot" style="background:#0284C7;"></span>Views/Inseln</span>
+          <span><span class="legend-dot" style="background:#DB2777;"></span>Nightlife</span>
+        </div>
+      </div>
+
+      <!-- ROUTE PLANNER PANEL -->
+      <div class="route-panel-inner" id="routeDockPanel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+          <span style="font-size:0.78rem; font-weight:600; color:var(--text-secondary);">Startpunkt: Yongil Elementary School (용일초교 / 인주대로 244)</span>
+          <button class="copy-kr-btn" onclick="clearRoute()">Route leeren</button>
+        </div>
+
+        <div class="preset-routes">
+          <div class="preset-label">Kuratierte Routen ab Inha (1-Click auf Karte)</div>
+          <button class="preset-btn" onclick="loadPresetRoute([1, 2, 3, 7])">
+            <span>Inha Campus & Backgate Night</span>
+            <span style="font-size:0.72rem; color:var(--accent-ocean);">4 Stops</span>
+          </button>
+          <button class="preset-btn" onclick="loadPresetRoute([42, 41, 39, 43])">
+            <span>Suin Line: Sinpo, Gaehangro & Wolmido</span>
+            <span style="font-size:0.72rem; color:var(--accent-ocean);">4 Stops</span>
+          </button>
+          <button class="preset-btn" onclick="loadPresetRoute([38, 32, 31, 34])">
+            <span>Songdo Architecture & Sunset Ramen</span>
+            <span style="font-size:0.72rem; color:var(--accent-ocean);">4 Stops</span>
+          </button>
+          <button class="preset-btn" onclick="loadPresetRoute([71, 72, 74, 73])">
+            <span>Yeongjongdo Ferry & Beach Cafes</span>
+            <span style="font-size:0.72rem; color:var(--accent-ocean);">4 Stops</span>
+          </button>
+          <button class="preset-btn" onclick="loadPresetRoute([101, 102, 103])">
+            <span>Suwon Direct Suin-Bundang Daytrip</span>
+            <span style="font-size:0.72rem; color:var(--accent-ocean);">3 Stops</span>
+          </button>
+        </div>
+
+        <div class="preset-label">Deine aktive Route (wird auf der Karte verbunden)</div>
+        <div class="timeline-list" id="routeTimeline"></div>
+
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:14px;">
+          <button class="btn-card-action" style="justify-content:center; padding:9px;" onclick="showRouteOnMap()">
+            Route auf der interaktiven Karte zeigen
+          </button>
+          <a id="openRouteNaverBtn" href="https://map.naver.com/p/search/%EC%9A%A9%EC%9D%BC%EC%B4%88%EB%93%B1%ED%95%99%EA%B5%90" target="_blank" rel="noopener" class="btn-primary-naver" style="justify-content:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Start (Yongil) in Naver Map öffnen
+          </a>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- DETAIL MODAL WITH MULTI-PHOTO PLACE GALLERY -->
+  <div class="modal-backdrop" id="detailModal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-panel">
+      <div class="modal-hero">
+        <img id="modalImg" src="" alt="" />
+        <button class="modal-close" onclick="closeModal()" title="Schließen">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <!-- Multi-photo real place gallery strip -->
+      <div class="modal-gallery-strip" id="modalGalleryStrip"></div>
+
+      <div class="modal-content">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;" id="modalBadges"></div>
+        <h2 id="modalTitle" style="font-family:'Plus Jakarta Sans',sans-serif; font-size:1.45rem; font-weight:800; margin-bottom:6px;"></h2>
+        <div style="display:flex; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+          <span id="modalKr" class="card-kr kr-text" style="font-size:0.95rem; padding:4px 10px;"></span>
+          <button class="btn-card-action" id="modalCopyKrBtn">Hangul kopieren</button>
+          <button class="btn-card-action" id="modalFocusMapBtn">Auf Karte zentrieren</button>
+        </div>
+
+        <p id="modalDesc" style="font-size:0.95rem; color:var(--text-secondary); line-height:1.65; margin-bottom:16px;"></p>
+
+        <div style="background:#F0F9FF; border-left:3px solid var(--accent-ocean); padding:14px 16px; border-radius:0 8px 8px 0; margin-bottom:18px;">
+          <div style="font-size:0.74rem; font-weight:700; text-transform:uppercase; color:#0369A1; margin-bottom:4px;">Local & Blog Insider-Tipp</div>
+          <p id="modalTip" style="font-size:0.9rem; color:var(--text-primary);"></p>
+        </div>
+
+        <div class="modal-info-grid">
+          <div class="info-box">
+            <div class="info-box-label">Anreise ab Inha University</div>
+            <div id="modalRoute" style="font-size:0.86rem; font-weight:600; color:var(--text-primary);"></div>
+          </div>
+          <div class="info-box">
+            <div class="info-box-label">Fahrzeit, Koordinaten & Budget</div>
+            <div id="modalMeta" style="font-size:0.86rem; font-weight:600; color:var(--text-primary);"></div>
+          </div>
+        </div>
+
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toastMsg">In Zwischenablage kopiert</div>
+  <script src="js/destinations_incheon.js"></script>
+  <script src="js/destinations_korea.js"></script>
+  <script src="js/app.js"></script>
+</body></html>
