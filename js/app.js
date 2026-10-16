@@ -477,7 +477,9 @@ function focusSpotOnMap(id, ev) {
   const s = ALL_SPOTS.find(x => x.id === id);
   if (!s || !map) return;
 
-  if (currentView === 'grid' || currentView === 'table' || currentView === 'videos') {
+  if (window.innerWidth <= 860) {
+    setMobileTab('map');
+  } else if (currentView === 'grid' || currentView === 'table' || currentView === 'videos') {
     setViewMode('split');
   }
   switchDockTab('map');
@@ -604,7 +606,52 @@ function toggleSave(id, ev) {
 }
 
 function updateSavedBadge() {
-  document.getElementById('savedCountBadge').textContent = savedIds.size;
+  const b1 = document.getElementById('savedCountBadge');
+  if (b1) b1.textContent = savedIds.size;
+  const b2 = document.getElementById('mobSavedBadge');
+  if (b2) b2.textContent = savedIds.size;
+}
+
+function setMobileTab(tab) {
+  const tabs = ['feed', 'map', 'route', 'saved'];
+  tabs.forEach(t => {
+    const btn = document.getElementById('mobTab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
+
+  if (tab === 'feed') {
+    setViewMode('grid');
+    if (onlySaved) {
+      onlySaved = false;
+      const b = document.getElementById('viewBtnSaved');
+      if (b) b.classList.remove('active');
+      applyFilters(false);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else if (tab === 'map') {
+    setViewMode('map');
+    switchDockTab('map');
+    if (map) {
+      setTimeout(() => {
+        map.invalidateSize();
+        fitMapToFiltered();
+      }, 150);
+    }
+    const dockEl = document.getElementById('rightDock');
+    if (dockEl) dockEl.scrollIntoView({ behavior: 'smooth' });
+  } else if (tab === 'route') {
+    setViewMode('map');
+    switchDockTab('route');
+    const dockEl = document.getElementById('rightDock');
+    if (dockEl) dockEl.scrollIntoView({ behavior: 'smooth' });
+  } else if (tab === 'saved') {
+    onlySaved = true;
+    const b = document.getElementById('viewBtnSaved');
+    if (b) b.classList.add('active');
+    applyFilters(false);
+    setViewMode('grid');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function toggleSavedFilter() {

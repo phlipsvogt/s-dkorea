@@ -1133,3 +1133,294 @@
 .leaflet-container {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
+
+/* ==========================================================
+   MOBILE & RESPONSIVE APP EXPERIENCE (SMARTPHONES & TABLETS)
+   ========================================================== */
+
+/* Mobile Bottom Navigation Bar */
+.mobile-bottom-bar {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  body {
+    padding-bottom: 74px; /* Space for sticky bottom app bar */
+  }
+
+  /* Top Navigation */
+  .top-nav {
+    top: 0;
+  }
+  .nav-container {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+  .brand-sub {
+    display: none;
+  }
+  .brand-title {
+    font-size: 1.1rem;
+  }
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+  .search-wrapper {
+    min-width: 100%;
+    order: 3;
+    max-width: 100%;
+  }
+  .search-input {
+    font-size: 0.88rem;
+    padding: 9px 34px 9px 38px;
+  }
+  .nav-actions {
+    display: none; /* Replaced by bottom bar on mobile for native app feel */
+  }
+
+  /* Sticky Filter Bar */
+  .filter-strip {
+    top: 0;
+  }
+  .filter-container {
+    padding: 8px 14px 10px 14px;
+    gap: 8px;
+  }
+  .category-pills {
+    gap: 6px;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .cat-pill {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    touch-action: manipulation;
+  }
+  .sub-filters {
+    gap: 8px;
+    padding-top: 6px;
+  }
+  .filter-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    width: 100%;
+  }
+  .filter-select {
+    width: 100%;
+    font-size: 0.76rem;
+    padding: 8px 6px;
+    border-radius: 8px;
+    background-color: var(--bg-surface);
+  }
+  .stats-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.74rem;
+  }
+  .photo-engine-status {
+    font-size: 0.7rem;
+    padding: 2px 7px;
+  }
+
+  /* Main Workspace Layout */
+  .main-layout,
+  .main-layout.full-map-mode {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 14px 80px 14px;
+    gap: 14px;
+  }
+
+  .right-dock {
+    position: relative;
+    top: 0;
+    width: 100%;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  }
+
+  #interactiveMap {
+    height: 380px;
+    min-height: 340px;
+  }
+
+  .main-layout.full-map-mode #interactiveMap {
+    height: calc(100vh - 240px);
+    min-height: 480px;
+  }
+
+  .map-toolbar {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .map-toolbar > div {
+    overflow-x: auto;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 3px;
+    scrollbar-width: none;
+  }
+  .map-toolbar > div::-webkit-scrollbar {
+    display: none;
+  }
+  .map-jump-btn {
+    flex-shrink: 0;
+    padding: 5px 9px;
+    font-size: 0.74rem;
+  }
+  #mapStyleSelect {
+    width: 100%;
+  }
+
+  .map-legend {
+    font-size: 0.68rem;
+    gap: 7px;
+    padding: 6px 10px;
+  }
+
+  /* Cards Grid */
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .main-layout.full-map-mode .cards-grid {
+    display: none; /* Hide cards in full map mode on mobile so map gets 100% focus */
+  }
+  .spot-card {
+    border-radius: 14px;
+  }
+  .card-media {
+    height: 185px;
+  }
+  .card-body {
+    padding: 12px 14px;
+    gap: 6px;
+  }
+  .card-title {
+    font-size: 1.02rem;
+  }
+  .card-desc {
+    font-size: 0.84rem;
+    -webkit-line-clamp: 3;
+  }
+  .card-tip-box {
+    font-size: 0.78rem;
+    padding: 7px 10px;
+  }
+  .card-footer {
+    padding: 9px 12px;
+    gap: 6px;
+  }
+  .btn-naver, .btn-google-photos, .btn-card-action {
+    padding: 6px 10px;
+    font-size: 0.76rem;
+    min-height: 34px;
+    border-radius: 8px;
+  }
+
+  /* Detail Modal as Native Bottom Sheet on Mobile */
+  .modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+  .modal-panel {
+    border-radius: 20px 20px 0 0;
+    max-height: 90vh;
+    width: 100%;
+    margin: 0;
+  }
+  .modal-hero {
+    height: 240px;
+  }
+  .modal-close {
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    background: rgba(15, 23, 42, 0.7);
+    color: #FFFFFF;
+  }
+  .modal-gallery-strip {
+    padding: 10px 16px 0 16px;
+  }
+  .gallery-thumb {
+    width: 74px;
+    height: 52px;
+  }
+  .modal-content {
+    padding: 16px 16px 32px 16px;
+  }
+  .modal-info-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .modal-actions {
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 12px;
+  }
+  .btn-primary-naver, .btn-secondary-link, .modal-actions .btn-google-photos {
+    width: 100%;
+    justify-content: center;
+    padding: 11px 16px;
+    font-size: 0.88rem;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  /* Native-style Mobile Bottom Bar */
+  .mobile-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 150;
+    box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.05);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .mobile-tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+  }
+
+  .mobile-tab-btn svg {
+    transition: transform 0.15s ease;
+  }
+
+  .mobile-tab-btn.active {
+    color: var(--accent-ocean);
+  }
+
+  .mobile-tab-btn.active svg {
+    transform: scale(1.12);
+    stroke: var(--accent-ocean);
+  }
+}
