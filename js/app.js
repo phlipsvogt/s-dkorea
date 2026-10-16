@@ -1,3 +1,15 @@
+
+let isMobileFilterOpen = false;
+
+function toggleMobileFilterDrawer() {
+  const drawer = document.getElementById('subFiltersDrawer');
+  const btn = document.getElementById('mobFilterToggleBtn');
+  if (!drawer) return;
+
+  isMobileFilterOpen = !isMobileFilterOpen;
+  drawer.classList.toggle('mobile-open', isMobileFilterOpen);
+  if (btn) btn.classList.toggle('active', isMobileFilterOpen);
+}
 const ALL_SPOTS = [...SPOTS_PART1, ...SPOTS_PART2];
 const INHA_COORDS = [37.4536, 126.6629];
 
@@ -778,6 +790,24 @@ function applyFilters(shouldAdjustMap = true) {
 
   currentFiltered = filtered;
   document.getElementById('resultsCounter').textContent = `Zeige ${filtered.length} von ${ALL_SPOTS.length} Reisezielen`;
+  
+  // Mobile active filter badge count
+  let activeCount = 0;
+  if (regionVal !== 'all') activeCount++;
+  if (durVal !== 'all') activeCount++;
+  if (costVal !== 'all') activeCount++;
+  if (sortVal !== 'default') activeCount++;
+  if (searchQuery) activeCount++;
+  if (onlySaved) activeCount++;
+  const mBadge = document.getElementById('mobActiveFilterBadge');
+  if (mBadge) {
+    if (activeCount > 0) {
+      mBadge.textContent = activeCount;
+      mBadge.style.display = 'inline-flex';
+    } else {
+      mBadge.style.display = 'none';
+    }
+  }
   renderCards(filtered);
   renderTable(filtered);
   updateMapMarkers(filtered);
@@ -1015,11 +1045,13 @@ function openModal(id) {
   `;
 
   document.getElementById('detailModal').classList.add('open');
+  document.body.classList.add('modal-open');
   loadModalPhotoGallery(s);
 }
 
 function closeModal() {
   document.getElementById('detailModal').classList.remove('open');
+  document.body.classList.remove('modal-open');
 }
 
 document.addEventListener('keydown', e => {

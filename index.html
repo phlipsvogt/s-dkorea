@@ -28,9 +28,17 @@
 
       <div class="search-wrapper">
         <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" class="search-input" placeholder="Suche nach 220 Orten, Hangul (인하대, 송도, 성수), Tipps oder Aktivitäten..." oninput="handleSearch(this.value)" />
+        <input type="text" id="searchInput" class="search-input" placeholder="Suche 220 Orte (Hangul, Tipps)..." oninput="handleSearch(this.value)" />
         <button id="searchClear" class="search-clear" onclick="clearSearch()" title="Suche löschen">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="mobile-header-tools">
+        <button class="mobile-filter-toggle" id="mobFilterToggleBtn" onclick="toggleMobileFilterDrawer()" title="Filter anpassen">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          <span>Filter</span>
+          <span class="mob-filter-badge" id="mobActiveFilterBadge" style="display:none;">0</span>
         </button>
       </div>
 
@@ -110,7 +118,7 @@
         </button>
       </div>
 
-      <div class="sub-filters">
+      <div class="sub-filters" id="subFiltersDrawer">
         <div class="filter-group">
           <select id="regionSelect" class="filter-select" onchange="applyFilters()">
             <option value="all">Region: Alle Regionen (Südkorea)</option>
