@@ -1150,39 +1150,208 @@
    MOBILE & RESPONSIVE APP EXPERIENCE (SMARTPHONES & TABLETS)
    ========================================================== */
 
-/* Lock body scroll when modal is open */
-body.modal-open {
+/* Lock body scroll when modal or drawer is open */
+body.modal-open,
+body.drawer-open {
   overflow: hidden !important;
   touch-action: none !important;
 }
 
-/* Mobile Header Tools (Hidden on desktop) */
-.mobile-header-tools {
+/* Hidden by default on desktop */
+.mobile-header-tools,
+.mobile-bottom-bar,
+.filter-drawer-backdrop {
   display: none;
 }
 
-/* Mobile Bottom Navigation Bar (Hidden on desktop) */
-.mobile-bottom-bar {
-  display: none;
+/* SLIDE-UP FILTER DRAWER / SHEET */
+.filter-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 250;
+  align-items: flex-end;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease;
 }
 
+.filter-drawer-backdrop.open {
+  display: flex !important;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.filter-drawer-panel {
+  background: #FFFFFF;
+  border-radius: 22px 22px 0 0;
+  width: 100%;
+  max-width: 600px;
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(100%);
+  transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filter-drawer-backdrop.open .filter-drawer-panel {
+  transform: translateY(0);
+}
+
+.filter-drawer-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #FFFFFF;
+}
+
+.drawer-header-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--accent-ocean-bg);
+  color: var(--accent-ocean);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-drawer-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.filter-drawer-body {
+  padding: 16px 18px 24px 18px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+
+.drawer-section-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.drawer-cat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.drawer-cat-btn {
+  padding: 7px 13px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--border-light);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+}
+
+.drawer-cat-btn.active {
+  background: var(--accent-ocean-bg);
+  border-color: var(--accent-ocean);
+  color: #0369A1;
+  font-weight: 700;
+}
+
+.drawer-select {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: var(--bg-page);
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  outline: none;
+  height: 42px;
+}
+
+.filter-drawer-footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border-light);
+  background: #FFFFFF;
+  display: flex;
+  gap: 10px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
+}
+
+.drawer-btn-reset {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light);
+  background: var(--bg-page);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+
+.drawer-btn-apply {
+  flex: 2;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  background: var(--text-primary);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+/* ==========================================================
+   SMARTPHONE MEDIA QUERY (SCREEN <= 860px)
+   ========================================================== */
 @media (max-width: 860px) {
   body {
-    padding-bottom: 74px; /* Space for sticky bottom app bar */
+    padding-bottom: 68px; /* space for bottom bar */
   }
 
-  /* Compact Single-Row Mobile Header (approx 50px) */
+  /* 1. SLIM AUTO-HIDE HEADER (ONLY 48px TALL) */
   .top-nav {
     position: sticky;
     top: 0;
     z-index: 100;
+    height: 48px;
     background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(14px);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border-light);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .top-nav.nav-hidden {
+    transform: translateY(-100%) !important; /* Slides completely out of view when scrolling down! */
+    pointer-events: none !important;
   }
 
   .nav-container {
-    padding: 8px 12px;
+    padding: 7px 12px;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -1213,7 +1382,7 @@ body.modal-open {
     display: none !important;
   }
 
-  /* Compact Search Bar in Header */
+  /* Search input integrated cleanly in the middle */
   .search-wrapper {
     flex: 1;
     min-width: 0;
@@ -1222,9 +1391,9 @@ body.modal-open {
     order: unset;
   }
   .search-input {
-    height: 34px;
-    padding: 6px 26px 6px 30px;
-    font-size: 0.8rem;
+    height: 32px;
+    padding: 4px 26px 4px 28px;
+    font-size: 0.78rem;
     border-radius: var(--radius-full);
     background: var(--bg-subtle);
     border-color: transparent;
@@ -1234,42 +1403,50 @@ body.modal-open {
     border-color: var(--text-primary);
   }
   .search-icon {
-    left: 10px;
-    width: 14px;
-    height: 14px;
+    left: 9px;
+    width: 13px;
+    height: 13px;
   }
   .search-clear {
-    right: 8px;
-    width: 18px;
-    height: 18px;
+    right: 7px;
+    width: 17px;
+    height: 17px;
   }
 
-  /* Mobile Filter Drawer Button */
+  /* Right Action: Filter Button */
   .mobile-header-tools {
-    display: flex;
+    display: flex !important;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex-shrink: 0;
   }
 
-  .mobile-filter-toggle {
+  .mobile-filter-toggle,
+  .mobile-filter-btn {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    height: 34px;
+    height: 32px;
     padding: 0 10px;
     border-radius: var(--radius-full);
     border: 1px solid var(--border-light);
     background: var(--bg-surface);
     color: var(--text-primary);
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 700;
     cursor: pointer;
     touch-action: manipulation;
     transition: all 0.15s ease;
   }
 
-  .mobile-filter-toggle.active {
+  .mobile-filter-toggle:hover,
+  .mobile-filter-btn:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-subtle);
+  }
+
+  .mobile-filter-toggle.active,
+  .mobile-filter-btn.active {
     background: var(--text-primary);
     color: #FFFFFF;
     border-color: var(--text-primary);
@@ -1280,9 +1457,9 @@ body.modal-open {
     color: #FFFFFF;
     font-size: 0.65rem;
     font-weight: 800;
-    min-width: 17px;
-    height: 17px;
-    padding: 0 4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 3px;
     border-radius: var(--radius-full);
     display: inline-flex;
     align-items: center;
@@ -1293,18 +1470,15 @@ body.modal-open {
     display: none !important;
   }
 
-  /* Sleek, Low-Profile Category Pills (height approx 34px) */
+  /* 2. CATEGORY STRIP: SCROLLS WITH CONTENT (NOT STICKY ON MOBILE!) */
   .filter-strip {
-    position: sticky;
-    top: 50px;
-    z-index: 90;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(14px);
+    position: static !important; /* NOT sticky so it scrolls away when scrolling down! */
     border-bottom: 1px solid var(--border-light);
+    background: transparent;
   }
 
   .filter-container {
-    padding: 6px 12px;
+    padding: 8px 12px 6px 12px;
     gap: 0;
   }
 
@@ -1321,9 +1495,9 @@ body.modal-open {
   }
 
   .cat-pill {
-    padding: 4px 11px;
-    font-size: 0.74rem;
-    height: 28px;
+    padding: 4px 10px;
+    font-size: 0.73rem;
+    height: 27px;
     border-radius: var(--radius-full);
     gap: 4px;
     flex-shrink: 0;
@@ -1334,57 +1508,59 @@ body.modal-open {
     height: 12px;
   }
 
-  /* Sub-filters on mobile: Collapsible Drawer (Closed by default to save 120px) */
+  /* Sub-filters on mobile are completely in the Filter Sheet, not in the main page */
   .sub-filters {
-    display: none;
-    padding: 10px 0 6px 0;
-    border-top: 1px solid var(--border-light);
+    display: none !important;
   }
 
-  .sub-filters.mobile-open {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .filter-group {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    width: 100%;
-  }
-
-  .filter-select {
-    width: 100%;
-    font-size: 0.74rem;
-    padding: 7px 6px;
-    border-radius: 8px;
-    background: var(--bg-page);
-    height: 36px;
-  }
-
-  .stats-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    font-size: 0.72rem;
-    padding-top: 4px;
-  }
-
-  .photo-engine-status {
-    display: none; /* Hide verbose status on mobile */
-  }
-
-  /* Main Workspace Layout */
+  /* 3. FULL-WIDTH VIEWPORT FOR CONTENT */
   .main-layout,
   .main-layout.full-map-mode {
     display: flex;
     flex-direction: column;
-    padding: 10px 12px 76px 12px;
+    padding: 6px 12px 76px 12px;
     gap: 12px;
   }
 
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-top: 2px;
+  }
+
+  .spot-card {
+    border-radius: 14px;
+  }
+  .card-media {
+    height: 180px;
+  }
+  .card-body {
+    padding: 12px 14px;
+    gap: 5px;
+  }
+  .card-title {
+    font-size: 1.02rem;
+  }
+  .card-desc {
+    font-size: 0.83rem;
+    -webkit-line-clamp: 3;
+  }
+  .card-tip-box {
+    font-size: 0.77rem;
+    padding: 6px 9px;
+  }
+  .card-footer {
+    padding: 8px 12px;
+    gap: 6px;
+  }
+  .btn-naver, .btn-google-photos, .btn-card-action {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    min-height: 34px;
+    border-radius: 8px;
+  }
+
+  /* Map View on Mobile */
   .right-dock {
     position: relative;
     top: 0;
@@ -1394,19 +1570,23 @@ body.modal-open {
   }
 
   #interactiveMap {
-    height: calc(100vh - 180px);
+    height: calc(100vh - 170px);
     min-height: 420px;
     border-radius: 12px;
   }
 
   .main-layout.full-map-mode #interactiveMap {
-    height: calc(100vh - 180px);
-    min-height: 480px;
+    height: calc(100vh - 170px);
+    min-height: 460px;
+  }
+
+  .main-layout.full-map-mode .cards-grid {
+    display: none;
   }
 
   .map-toolbar {
-    padding: 8px 10px;
-    gap: 8px;
+    padding: 7px 9px;
+    gap: 6px;
   }
   .map-toolbar > div {
     overflow-x: auto;
@@ -1414,7 +1594,7 @@ body.modal-open {
     display: flex;
     flex-wrap: nowrap !important;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 3px;
+    padding-bottom: 2px;
     scrollbar-width: none;
   }
   .map-toolbar > div::-webkit-scrollbar {
@@ -1422,60 +1602,20 @@ body.modal-open {
   }
   .map-jump-btn {
     flex-shrink: 0;
-    padding: 5px 9px;
-    font-size: 0.74rem;
+    padding: 5px 8px;
+    font-size: 0.72rem;
   }
   #mapStyleSelect {
     width: 100%;
   }
 
   .map-legend {
-    font-size: 0.68rem;
-    gap: 7px;
-    padding: 6px 10px;
+    font-size: 0.67rem;
+    gap: 6px;
+    padding: 6px 9px;
   }
 
-  /* Cards Grid */
-  .cards-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  .main-layout.full-map-mode .cards-grid {
-    display: none;
-  }
-  .spot-card {
-    border-radius: 14px;
-  }
-  .card-media {
-    height: 185px;
-  }
-  .card-body {
-    padding: 12px 14px;
-    gap: 6px;
-  }
-  .card-title {
-    font-size: 1.02rem;
-  }
-  .card-desc {
-    font-size: 0.84rem;
-    -webkit-line-clamp: 3;
-  }
-  .card-tip-box {
-    font-size: 0.78rem;
-    padding: 7px 10px;
-  }
-  .card-footer {
-    padding: 9px 12px;
-    gap: 6px;
-  }
-  .btn-naver, .btn-google-photos, .btn-card-action {
-    padding: 6px 10px;
-    font-size: 0.76rem;
-    min-height: 34px;
-    border-radius: 8px;
-  }
-
-  /* Detail Modal as Native Bottom Sheet on Mobile */
+  /* Detail Modal */
   .modal-backdrop {
     padding: 0;
     align-items: flex-end;
@@ -1487,7 +1627,7 @@ body.modal-open {
     margin: 0;
   }
   .modal-hero {
-    height: 240px;
+    height: 230px;
   }
   .modal-close {
     top: 12px;
@@ -1498,14 +1638,14 @@ body.modal-open {
     color: #FFFFFF;
   }
   .modal-gallery-strip {
-    padding: 10px 16px 0 16px;
+    padding: 8px 14px 0 14px;
   }
   .gallery-thumb {
-    width: 74px;
-    height: 52px;
+    width: 72px;
+    height: 50px;
   }
   .modal-content {
-    padding: 16px 16px 32px 16px;
+    padding: 14px 14px 30px 14px;
   }
   .modal-info-grid {
     grid-template-columns: 1fr;
@@ -1526,17 +1666,17 @@ body.modal-open {
     text-align: center;
   }
 
-  /* Native-style Mobile Bottom Bar */
+  /* Mobile Bottom App Bar */
   .mobile-bottom-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 58px;
+    height: 56px;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(16px);
     border-top: 1px solid var(--border-light);
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: space-around;
     z-index: 150;
@@ -1550,20 +1690,15 @@ body.modal-open {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 2px;
     height: 100%;
     background: transparent;
     border: none;
     color: var(--text-muted);
-    font-size: 0.68rem;
+    font-size: 0.67rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s ease;
     touch-action: manipulation;
-  }
-
-  .mobile-tab-btn svg {
-    transition: transform 0.15s ease;
   }
 
   .mobile-tab-btn.active {
@@ -1571,21 +1706,21 @@ body.modal-open {
   }
 
   .mobile-tab-btn.active svg {
-    transform: scale(1.12);
+    transform: scale(1.1);
     stroke: var(--accent-ocean);
   }
 
   .toast {
-    bottom: 74px !important;
+    bottom: 72px !important;
   }
 }
 
-  </style>
+</style>
 </head>
 <body>
 
   <!-- STICKY HEADER -->
-  <header class="top-nav">
+  <header class="top-nav" id="mainTopNav">
     <div class="nav-container">
       <a href="#" class="brand" onclick="resetAllFilters(); return false;">
         <div class="brand-mark">
@@ -1606,7 +1741,7 @@ body.modal-open {
       </div>
 
       <div class="mobile-header-tools">
-        <button class="mobile-filter-toggle" id="mobFilterToggleBtn" onclick="toggleMobileFilterDrawer()" title="Filter anpassen">
+        <button class="mobile-filter-toggle mobile-filter-btn" id="mobFilterToggleBtn" onclick="toggleMobileFilterDrawer()" title="Filter anpassen">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           <span>Filter</span>
           <span class="mob-filter-badge" id="mobActiveFilterBadge" style="display:none;">0</span>
@@ -1689,7 +1824,7 @@ body.modal-open {
         </button>
       </div>
 
-      <div class="sub-filters">
+      <div class="sub-filters" id="subFiltersDrawer">
         <div class="filter-group">
           <select id="regionSelect" class="filter-select" onchange="applyFilters()">
             <option value="all">Region: Alle Regionen (Südkorea)</option>
@@ -1935,6 +2070,67 @@ body.modal-open {
     </div>
   </div>
 
+    <!-- MOBILE FILTER SHEET (AUFKLAPPBAR RECHTS/UNTEN) -->
+  <div class="filter-drawer-backdrop" id="filterDrawerBackdrop" onclick="if(event.target===this) toggleMobileFilterDrawer(false)">
+    <div class="filter-drawer-panel">
+      <div class="filter-drawer-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="drawer-header-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          </div>
+          <div>
+            <h3 style="font-size:1.02rem; font-weight:800; color:var(--text-primary); margin:0;">Filter & Kategorien</h3>
+            <span style="font-size:0.72rem; color:var(--text-muted);">Wähle Region, Budget & Fahrzeit ab Yongil</span>
+          </div>
+        </div>
+        <button class="filter-drawer-close" onclick="toggleMobileFilterDrawer(false)" title="Schließen">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="filter-drawer-body">
+        <div class="drawer-section-title">Kategorie auswählen</div>
+        <div class="drawer-cat-grid" id="drawerCatGrid">
+          <button class="drawer-cat-btn active" data-cat="all" onclick="setCategoryFromDrawer('all')">Alle Orte (220)</button>
+          <button class="drawer-cat-btn" data-cat="inha" onclick="setCategoryFromDrawer('inha')">Inha Local</button>
+          <button class="drawer-cat-btn" data-cat="gems" onclick="setCategoryFromDrawer('gems')">Hidden Gems</button>
+          <button class="drawer-cat-btn" data-cat="Cafes & Bakery" onclick="setCategoryFromDrawer('Cafes & Bakery')">Cafes & Bakery</button>
+          <button class="drawer-cat-btn" data-cat="Food & Markets" onclick="setCategoryFromDrawer('Food & Markets')">Food & Markets</button>
+          <button class="drawer-cat-btn" data-cat="Nature & Coast" onclick="setCategoryFromDrawer('Nature & Coast')">Nature & Coast</button>
+          <button class="drawer-cat-btn" data-cat="Culture & History" onclick="setCategoryFromDrawer('Culture & History')">Culture & History</button>
+          <button class="drawer-cat-btn" data-cat="Architecture & Views" onclick="setCategoryFromDrawer('Architecture & Views')">Views & Foto</button>
+          <button class="drawer-cat-btn" data-cat="Islands & Day Trips" onclick="setCategoryFromDrawer('Islands & Day Trips')">Inseln & Trips</button>
+          <button class="drawer-cat-btn" data-cat="Nightlife & Vibes" onclick="setCategoryFromDrawer('Nightlife & Vibes')">Nightlife</button>
+        </div>
+
+        <div class="drawer-section-title" style="margin-top:16px;">Reiseziel & Region</div>
+        <select id="drawerRegionSelect" class="drawer-select" onchange="syncDrawerFilter('regionSelect', this.value)"></select>
+
+        <div class="drawer-section-title" style="margin-top:14px;">Anreisezeit ab Yongil / Inha</div>
+        <select id="drawerDurationSelect" class="drawer-select" onchange="syncDrawerFilter('durationSelect', this.value)"></select>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px;">
+          <div>
+            <div class="drawer-section-title">Budget</div>
+            <select id="drawerCostSelect" class="drawer-select" onchange="syncDrawerFilter('costSelect', this.value)"></select>
+          </div>
+          <div>
+            <div class="drawer-section-title">Sortierung</div>
+            <select id="drawerSortSelect" class="drawer-select" onchange="syncDrawerFilter('sortSelect', this.value)"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-drawer-footer">
+        <button class="drawer-btn-reset" onclick="resetAllFiltersFromDrawer()">
+          Filter leeren
+        </button>
+        <button class="drawer-btn-apply" onclick="toggleMobileFilterDrawer(false)">
+          <span id="drawerApplyCount">220 Orte anzeigen</span>
+        </button>
+      </div>
+    </div>
+  </div>
   <!-- MOBILE BOTTOM APP BAR (Smartphones only) -->
   <nav class="mobile-bottom-bar" id="mobileBottomBar">
     <button class="mobile-tab-btn active" id="mobTabFeed" onclick="setMobileTab('feed')">
@@ -1957,7 +2153,6 @@ body.modal-open {
 
   <!-- TOAST -->
   <div class="toast" id="toastMsg">In Zwischenablage kopiert</div>
-
   <script>
 const IMG = {
   subongPark: "https://ak-d.tripcdn.com/images/1i62322349lse2e00FD0C.jpg?proc=source/trip",
@@ -7336,17 +7531,6 @@ const SPOTS_PART2 = [
 
 
 
-let isMobileFilterOpen = false;
-
-function toggleMobileFilterDrawer() {
-  const drawer = document.getElementById('subFiltersDrawer');
-  const btn = document.getElementById('mobFilterToggleBtn');
-  if (!drawer) return;
-
-  isMobileFilterOpen = !isMobileFilterOpen;
-  drawer.classList.toggle('mobile-open', isMobileFilterOpen);
-  if (btn) btn.classList.toggle('active', isMobileFilterOpen);
-}
 const ALL_SPOTS = [...SPOTS_PART1, ...SPOTS_PART2];
 const INHA_COORDS = [37.4536, 126.6629];
 
@@ -8424,5 +8608,125 @@ window.addEventListener("resize", () => { if (map) map.invalidateSize(); });
 renderRoute();
 runBatchWikiPhotoFetch();
 
-  </script>
-</body></html>
+
+// ==========================================================
+// MOBILE SLIDE-UP FILTER DRAWER & SCROLL-HIDE HEADER
+// ==========================================================
+let isDrawerOpen = false;
+
+function toggleMobileFilterDrawer(open) {
+  const backdrop = document.getElementById('filterDrawerBackdrop');
+  if (!backdrop) return;
+
+  if (typeof open === 'boolean') {
+    isDrawerOpen = open;
+  } else {
+    isDrawerOpen = !isDrawerOpen;
+  }
+
+  if (isDrawerOpen) {
+    backdrop.classList.add('open');
+    document.body.classList.add('drawer-open');
+    initDrawerOptions();
+  } else {
+    backdrop.classList.remove('open');
+    document.body.classList.remove('drawer-open');
+  }
+
+  const btn = document.getElementById('mobFilterToggleBtn');
+  if (btn) btn.classList.toggle('active', isDrawerOpen);
+}
+
+function initDrawerOptions() {
+  // Clone options from main selects to drawer selects
+  const mapPairs = [
+    { main: 'regionSelect', drawer: 'drawerRegionSelect' },
+    { main: 'durationSelect', drawer: 'drawerDurationSelect' },
+    { main: 'costSelect', drawer: 'drawerCostSelect' },
+    { main: 'sortSelect', drawer: 'drawerSortSelect' }
+  ];
+
+  mapPairs.forEach(p => {
+    const mainEl = document.getElementById(p.main);
+    const drawerEl = document.getElementById(p.drawer);
+    if (mainEl && drawerEl) {
+      if (drawerEl.options.length === 0) {
+        drawerEl.innerHTML = mainEl.innerHTML;
+      }
+      drawerEl.value = mainEl.value;
+    }
+  });
+
+  // Sync active category pill in drawer
+  document.querySelectorAll('.drawer-cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === activeCategory);
+  });
+
+  updateDrawerApplyCount();
+}
+
+function syncDrawerFilter(targetId, val) {
+  const mainEl = document.getElementById(targetId);
+  if (mainEl) {
+    mainEl.value = val;
+    applyFilters(false);
+    updateDrawerApplyCount();
+  }
+}
+
+function setCategoryFromDrawer(cat) {
+  setCategory(cat);
+  document.querySelectorAll('.drawer-cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === cat);
+  });
+  updateDrawerApplyCount();
+}
+
+function resetAllFiltersFromDrawer() {
+  resetAllFilters();
+  initDrawerOptions();
+}
+
+function updateDrawerApplyCount() {
+  const countEl = document.getElementById('drawerApplyCount');
+  if (countEl) {
+    countEl.textContent = `${currentFiltered.length} Orte anzeigen`;
+  }
+}
+
+// Auto-hide compact header on scroll down on mobile
+let lastMobileScrollY = 0;
+let isMobileNavHidden = false;
+
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('mainTopNav') || document.querySelector('.top-nav');
+  if (!nav) return;
+
+  if (window.innerWidth > 860) {
+    if (isMobileNavHidden) {
+      nav.classList.remove('nav-hidden');
+      isMobileNavHidden = false;
+    }
+    return;
+  }
+
+  if (document.body.classList.contains('modal-open') || document.body.classList.contains('drawer-open')) return;
+
+  const currentY = window.pageYOffset || document.documentElement.scrollTop || window.scrollY || 0;
+  if (currentY > 40 && currentY > lastMobileScrollY + 6) {
+    if (!isMobileNavHidden) {
+      nav.classList.add('nav-hidden');
+      isMobileNavHidden = true;
+    }
+  } else if (currentY < lastMobileScrollY - 6 || currentY <= 25) {
+    if (isMobileNavHidden) {
+      nav.classList.remove('nav-hidden');
+      isMobileNavHidden = false;
+    }
+  }
+  lastMobileScrollY = Math.max(0, currentY);
+}, { passive: true });
+
+</script>
+</body>
+</html>

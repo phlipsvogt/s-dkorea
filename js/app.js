@@ -1,15 +1,4 @@
 
-let isMobileFilterOpen = false;
-
-function toggleMobileFilterDrawer() {
-  const drawer = document.getElementById('subFiltersDrawer');
-  const btn = document.getElementById('mobFilterToggleBtn');
-  if (!drawer) return;
-
-  isMobileFilterOpen = !isMobileFilterOpen;
-  drawer.classList.toggle('mobile-open', isMobileFilterOpen);
-  if (btn) btn.classList.toggle('active', isMobileFilterOpen);
-}
 const ALL_SPOTS = [...SPOTS_PART1, ...SPOTS_PART2];
 const INHA_COORDS = [37.4536, 126.6629];
 
@@ -1086,3 +1075,122 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 window.addEventListener("resize", () => { if (map) map.invalidateSize(); });
 renderRoute();
 runBatchWikiPhotoFetch();
+
+
+// ==========================================================
+// MOBILE SLIDE-UP FILTER DRAWER & SCROLL-HIDE HEADER
+// ==========================================================
+let isDrawerOpen = false;
+
+function toggleMobileFilterDrawer(open) {
+  const backdrop = document.getElementById('filterDrawerBackdrop');
+  if (!backdrop) return;
+
+  if (typeof open === 'boolean') {
+    isDrawerOpen = open;
+  } else {
+    isDrawerOpen = !isDrawerOpen;
+  }
+
+  if (isDrawerOpen) {
+    backdrop.classList.add('open');
+    document.body.classList.add('drawer-open');
+    initDrawerOptions();
+  } else {
+    backdrop.classList.remove('open');
+    document.body.classList.remove('drawer-open');
+  }
+
+  const btn = document.getElementById('mobFilterToggleBtn');
+  if (btn) btn.classList.toggle('active', isDrawerOpen);
+}
+
+function initDrawerOptions() {
+  // Clone options from main selects to drawer selects
+  const mapPairs = [
+    { main: 'regionSelect', drawer: 'drawerRegionSelect' },
+    { main: 'durationSelect', drawer: 'drawerDurationSelect' },
+    { main: 'costSelect', drawer: 'drawerCostSelect' },
+    { main: 'sortSelect', drawer: 'drawerSortSelect' }
+  ];
+
+  mapPairs.forEach(p => {
+    const mainEl = document.getElementById(p.main);
+    const drawerEl = document.getElementById(p.drawer);
+    if (mainEl && drawerEl) {
+      if (drawerEl.options.length === 0) {
+        drawerEl.innerHTML = mainEl.innerHTML;
+      }
+      drawerEl.value = mainEl.value;
+    }
+  });
+
+  // Sync active category pill in drawer
+  document.querySelectorAll('.drawer-cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === activeCategory);
+  });
+
+  updateDrawerApplyCount();
+}
+
+function syncDrawerFilter(targetId, val) {
+  const mainEl = document.getElementById(targetId);
+  if (mainEl) {
+    mainEl.value = val;
+    applyFilters(false);
+    updateDrawerApplyCount();
+  }
+}
+
+function setCategoryFromDrawer(cat) {
+  setCategory(cat);
+  document.querySelectorAll('.drawer-cat-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-cat') === cat);
+  });
+  updateDrawerApplyCount();
+}
+
+function resetAllFiltersFromDrawer() {
+  resetAllFilters();
+  initDrawerOptions();
+}
+
+function updateDrawerApplyCount() {
+  const countEl = document.getElementById('drawerApplyCount');
+  if (countEl) {
+    countEl.textContent = `${currentFiltered.length} Orte anzeigen`;
+  }
+}
+
+// Auto-hide compact header on scroll down on mobile
+let lastMobileScrollY = 0;
+let isMobileNavHidden = false;
+
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('mainTopNav') || document.querySelector('.top-nav');
+  if (!nav) return;
+
+  if (window.innerWidth > 860) {
+    if (isMobileNavHidden) {
+      nav.classList.remove('nav-hidden');
+      isMobileNavHidden = false;
+    }
+    return;
+  }
+
+  if (document.body.classList.contains('modal-open') || document.body.classList.contains('drawer-open')) return;
+
+  const currentY = window.pageYOffset || document.documentElement.scrollTop || window.scrollY || 0;
+  if (currentY > 40 && currentY > lastMobileScrollY + 6) {
+    if (!isMobileNavHidden) {
+      nav.classList.add('nav-hidden');
+      isMobileNavHidden = true;
+    }
+  } else if (currentY < lastMobileScrollY - 6 || currentY <= 25) {
+    if (isMobileNavHidden) {
+      nav.classList.remove('nav-hidden');
+      isMobileNavHidden = false;
+    }
+  }
+  lastMobileScrollY = Math.max(0, currentY);
+}, { passive: true });
