@@ -11,6 +11,124 @@ let routeIds = [1, 2, 3, 7];
 let currentFiltered = [...ALL_SPOTS];
 
 // ==========================================================
+// CURATED SHORTS & SHORT-FORM VIDEO DATASET (12 HIGHLIGHTS)
+// ==========================================================
+const SPOT_SHORTS = [
+  {
+    id: 'short-103',
+    spotId: 103,
+    title: 'Starfield Suwon Byeolmadang Library',
+    youtubeId: 'JisPmmz9Zc0',
+    creator: '@koreatravel',
+    highlight: 'Riesige mehrstöckige Zirkular-Bibliothek & Vinyl-Lounge',
+    duration: '0:35'
+  },
+  {
+    id: 'short-38',
+    spotId: 38,
+    title: 'Songdo Central Park & G-Tower Views',
+    youtubeId: 'KT1ABO6ESKg',
+    creator: '@incheonlife',
+    highlight: 'Futuristische Skyline, Mond-Boote & Rehe mitten im Park',
+    duration: '0:28'
+  },
+  {
+    id: 'short-183',
+    spotId: 183,
+    title: 'Haeundae Blueline Park Sky Capsule',
+    youtubeId: 'xUpZ8UgTgVQ',
+    creator: '@busanvibes',
+    highlight: 'Bunte Sky-Kapseln direkt an der Klippenküste von Busan',
+    duration: '0:30'
+  },
+  {
+    id: 'short-138',
+    spotId: 138,
+    title: 'Gwangjang Market Food Tour',
+    youtubeId: '8PO_du6w8lw',
+    creator: '@seoulfoodie',
+    highlight: 'Knusprige Bindaetteok, Mayak Gimbap & scharfes Tteokbokki',
+    duration: '0:45'
+  },
+  {
+    id: 'short-121',
+    spotId: 121,
+    title: 'Gyeongbokgung Palace Royal Guard Walk',
+    youtubeId: 'zIkNnC3_x4w',
+    creator: '@historickorea',
+    highlight: 'Traditionelle Wachablösung & Palastarchitektur von 1395',
+    duration: '0:40'
+  },
+  {
+    id: 'short-130',
+    spotId: 130,
+    title: 'Seongsu-dong Cafe & Pop-Up Scene',
+    youtubeId: 'TDRC3DMo1gQ',
+    creator: '@trendseoul',
+    highlight: 'Industrie-Loft-Cafés, Nudake Peak Cake & Dior Pavillon',
+    duration: '0:32'
+  },
+  {
+    id: 'short-44',
+    spotId: 44,
+    title: 'Incheon Chinatown & Jajangmyeon',
+    youtubeId: '7k_IEuPW0hI',
+    creator: '@incheontour',
+    highlight: 'Historisches Paeru-Tor, Geburtsort des koreanischen Jajangmyeon',
+    duration: '0:30'
+  },
+  {
+    id: 'short-31',
+    spotId: 31,
+    title: 'Joyangbangjik Textile Factory Cafe',
+    youtubeId: 'orqx67XLfDo',
+    creator: '@ganghwatrip',
+    highlight: 'Alte Weberei von 1933 verwandelt in Retro-Museums-Café',
+    duration: '0:45'
+  },
+  {
+    id: 'short-2',
+    spotId: 2,
+    title: 'Inha Backgate Student Food Alley',
+    youtubeId: '1ZK348wy5Eg',
+    creator: '@inhalocal',
+    highlight: 'Günstiges Samgyeopsal, Tonkatsu & Bars direkt am Campus',
+    duration: '0:35'
+  },
+  {
+    id: 'short-41',
+    spotId: 41,
+    title: 'Sinpo International Market Dakgangjeong',
+    youtubeId: 'ZMCX1kvw91g',
+    creator: '@incheonbites',
+    highlight: 'Berühmtes süß-scharf glasiertes Fried Chicken',
+    duration: '0:35'
+  },
+  {
+    id: 'short-43',
+    spotId: 43,
+    title: 'Wolmido Island Sunset Pier',
+    youtubeId: '1ZK348wy5Eg',
+    creator: '@incheonlife',
+    highlight: 'Meerpromenade, Disco Pang Pang & Westmeer-Sonnenuntergang',
+    duration: '0:40'
+  },
+  {
+    id: 'short-181',
+    spotId: 181,
+    title: 'Busan Gamcheon Culture Village',
+    youtubeId: 'yBGtdnfdte0',
+    creator: '@visitkorea',
+    highlight: 'Bunte Häuser an den Hügeln & Fotospot mit dem Kleinen Prinzen',
+    duration: '0:35'
+  }
+];
+
+function getShortForSpot(spotId) {
+  return SPOT_SHORTS.find(s => s.spotId === spotId) || null;
+}
+
+// ==========================================================
 // 1. REAL PLACE PHOTO ENGINE (Wikipedia KO/EN + Wikimedia Commons)
 // ==========================================================
 let realPhotoCache = {};
@@ -426,12 +544,18 @@ function updateMapMarkers(spots) {
     const naverUrl = getNaverUrl(s.kr);
     const googlePhotosUrl = getGooglePhotosUrl(s.kr, s.name);
     const isSaved = savedIds.has(s.id);
+    const spotShort = getShortForSpot(s.id);
 
     const popupHtml = `
       <div style="font-family:'Inter',sans-serif;">
         <div style="height:135px; width:100%; background:#0F172A; position:relative; overflow:hidden;">
           <img id="popup-img-${s.id}" src="${s.img}" alt="${s.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://plus.unsplash.com/premium_photo-1661886333708-877148b43ae1?fm=jpg&q=80&w=1000&auto=format&fit=crop'" />
           <span style="position:absolute; top:8px; left:8px; background:rgba(15,23,42,0.85); color:#fff; font-size:0.68rem; font-weight:600; padding:3px 8px; border-radius:99px;">${s.transitTime}</span>
+          ${spotShort ? `
+          <button class="card-short-badge" onclick="openShortsViewer('${spotShort.id}', event)" title="Short ansehen" style="top:8px; right:42px; padding:3px 7px;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Short</span>
+          </button>` : ''}
           <button class="save-btn ${isSaved ? 'saved' : ''}" id="popup-save-img-btn-${s.id}" onclick="toggleSave(${s.id}, event)" title="Auf Merkliste speichern" style="position:absolute; top:8px; right:8px; width:30px; height:30px; z-index:10;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
@@ -446,6 +570,11 @@ function updateMapMarkers(spots) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               <span>${isSaved ? 'Gemerkt' : 'Merken'}</span>
             </button>
+            ${spotShort ? `
+            <button class="btn-card-action btn-short-link" style="font-size:0.7rem; padding:4px 7px;" onclick="openShortsViewer('${spotShort.id}', event)" title="Short ansehen">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Short</span>
+            </button>` : ''}
             <a href="${naverUrl}" target="_blank" rel="noopener" class="btn-naver" style="font-size:0.7rem; padding:4px 8px;">Naver Map</a>
             <a href="${googlePhotosUrl}" target="_blank" rel="noopener" class="btn-google-photos" style="font-size:0.7rem; padding:4px 8px;">Google Fotos</a>
             <button class="btn-card-action" style="font-size:0.7rem; padding:4px 7px;" onclick="addToRoute(${s.id})">+ Route</button>
@@ -895,6 +1024,7 @@ function renderCards(list) {
     const imgUrl = realPhotoCache[s.id] || s.img;
     const naverUrl = getNaverUrl(s.kr);
     const googlePhotosUrl = getGooglePhotosUrl(s.kr, s.name);
+    const spotShort = getShortForSpot(s.id);
 
     return `
     <article class="spot-card" data-spot-id="${s.id}" onmouseenter="highlightPinOnHover(${s.id})" onmouseleave="unhighlightPinOnHover(${s.id})">
@@ -904,6 +1034,11 @@ function renderCards(list) {
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           ${s.transitTime}
         </div>
+        ${spotShort ? `
+        <button class="card-short-badge" onclick="openShortsViewer('${spotShort.id}', event)" title="Short-Video ansehen">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span>Short</span>
+        </button>` : ''}
         <button class="save-btn ${isSaved ? 'saved' : ''}" onclick="toggleSave(${s.id}, event)" title="Merken">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </button>
@@ -944,7 +1079,12 @@ function renderCards(list) {
       </div>
 
       <div class="card-footer">
-        <div style="display:flex; gap:5px; flex-wrap:wrap;">
+        <div style="display:flex; gap:5px; flex-wrap:wrap; align-items:center;">
+          ${spotShort ? `
+          <button class="btn-card-action btn-short-link" onclick="openShortsViewer('${spotShort.id}', event)" title="Short-Video abspielen">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Short</span>
+          </button>` : ''}
           <a href="${naverUrl}" target="_blank" rel="noopener" class="btn-naver" title="Direkt in Naver Map öffnen">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Naver
@@ -1083,11 +1223,17 @@ function openModal(id) {
   `;
 
   const isSaved = savedIds.has(s.id);
+  const spotShort = getShortForSpot(s.id);
   document.getElementById('modalActions').innerHTML = `
     <button id="modal-save-btn-${s.id}" class="btn-secondary-link ${isSaved ? 'saved' : ''}" style="${isSaved ? 'background:var(--text-primary); color:#FFFFFF; border-color:var(--text-primary);' : ''} display:inline-flex; align-items:center; gap:6px;" onclick="toggleSave(${s.id}, event)">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       <span>${isSaved ? 'Gemerkt' : 'Auf Merkliste'}</span>
     </button>
+    ${spotShort ? `
+    <button class="btn-secondary-link btn-short-link" style="display:inline-flex; align-items:center; gap:6px; background:#FFF1F2; color:#BE123C; border-color:#FECDD3; font-weight:700;" onclick="closeModal(); openShortsViewer('${spotShort.id}', event)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span>Short-Video ansehen</span>
+    </button>` : ''}
     <a href="${getNaverUrl(s.kr)}" target="_blank" rel="noopener" class="btn-primary-naver">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       In Naver Map öffnen (${s.kr})
@@ -1120,7 +1266,11 @@ function closeModal() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') {
+    closeModal();
+    closeShortsViewer();
+    toggleMobileFilterDrawer(false);
+  }
 });
 
 function ensureMapReady() {
@@ -1270,3 +1420,173 @@ window.addEventListener('scroll', () => {
   }
   lastMobileScrollY = Math.max(0, currentY);
 }, { passive: true });
+
+// ==========================================================
+// BIDIRECTIONAL SHORTS VIEWER & DISCOVERY ENGINE
+// ==========================================================
+let currentShortIndex = 0;
+let currentShort = SPOT_SHORTS[0];
+
+function openShortsViewer(shortIdOrSpotId, ev) {
+  if (ev) ev.stopPropagation();
+
+  let targetIndex = 0;
+  if (typeof shortIdOrSpotId === 'number') {
+    const idx = SPOT_SHORTS.findIndex(s => s.spotId === shortIdOrSpotId);
+    targetIndex = idx >= 0 ? idx : 0;
+  } else if (typeof shortIdOrSpotId === 'string') {
+    const idx = SPOT_SHORTS.findIndex(s => s.id === shortIdOrSpotId);
+    targetIndex = idx >= 0 ? idx : 0;
+  }
+
+  currentShortIndex = targetIndex;
+  renderShortByIndex(currentShortIndex);
+
+  const modal = document.getElementById('shortsModal');
+  if (modal) modal.classList.add('open');
+  document.body.classList.add('modal-open');
+}
+
+function renderShortByIndex(index) {
+  if (index < 0) index = SPOT_SHORTS.length - 1;
+  if (index >= SPOT_SHORTS.length) index = 0;
+  currentShortIndex = index;
+  currentShort = SPOT_SHORTS[index];
+
+  const spot = ALL_SPOTS.find(x => x.id === currentShort.spotId) || ALL_SPOTS[0];
+
+  // Update Iframe Player
+  const iframe = document.getElementById('shortsIframe');
+  if (iframe) {
+    const embedUrl = `https://www.youtube.com/embed/${currentShort.youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+    if (iframe.src !== embedUrl) {
+      iframe.src = embedUrl;
+    }
+  }
+
+  // Update Counter and Creator
+  const counterEl = document.getElementById('shortsCounter');
+  if (counterEl) counterEl.textContent = `${index + 1} / ${SPOT_SHORTS.length}`;
+
+  const creatorEl = document.getElementById('shortsCreator');
+  if (creatorEl) creatorEl.textContent = currentShort.creator;
+
+  // Update Connected Spot Info
+  const spotImg = document.getElementById('shortsSpotImg');
+  if (spotImg) {
+    spotImg.src = realPhotoCache[spot.id] || spot.img;
+    spotImg.alt = spot.name;
+  }
+
+  const spotTransit = document.getElementById('shortsSpotTransit');
+  if (spotTransit) spotTransit.textContent = spot.transitTime;
+
+  const spotMeta = document.getElementById('shortsSpotMeta');
+  if (spotMeta) spotMeta.textContent = `#${spot.id} • ${spot.region} • ${spot.category}`;
+
+  const spotTitle = document.getElementById('shortsSpotTitle');
+  if (spotTitle) spotTitle.textContent = spot.name;
+
+  const spotKr = document.getElementById('shortsSpotKr');
+  if (spotKr) spotKr.textContent = spot.kr;
+
+  const spotTip = document.getElementById('shortsSpotTip');
+  if (spotTip) spotTip.textContent = currentShort.highlight || spot.tip;
+
+  // Update Save Button
+  const isSaved = savedIds.has(spot.id);
+  const saveBtn = document.getElementById('shortsSaveBtn');
+  const saveLabel = document.getElementById('shortsSaveLabel');
+  if (saveBtn) {
+    saveBtn.classList.toggle('saved', isSaved);
+    const svg = saveBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isSaved ? 'currentColor' : 'none');
+  }
+  if (saveLabel) {
+    saveLabel.textContent = isSaved ? 'Gemerkt' : 'Merken';
+  }
+
+  // Update Naver Button
+  const naverBtn = document.getElementById('shortsNaverBtn');
+  if (naverBtn) {
+    naverBtn.href = getNaverUrl(spot.kr);
+  }
+
+  // Render Thumbnails Strip
+  renderShortsThumbnails();
+}
+
+function renderShortsThumbnails() {
+  const strip = document.getElementById('shortsThumbsStrip');
+  if (!strip) return;
+
+  strip.innerHTML = SPOT_SHORTS.map((sh, idx) => {
+    const sp = ALL_SPOTS.find(x => x.id === sh.spotId);
+    if (!sp) return '';
+    const imgSrc = realPhotoCache[sp.id] || sp.img;
+    const isActive = idx === currentShortIndex;
+    return `
+      <div class="shorts-thumb-item ${isActive ? 'active' : ''}" onclick="renderShortByIndex(${idx})">
+        <img src="${imgSrc}" alt="${sp.name}" />
+        <span>${sp.name.split(' ')[0]}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function closeShortsViewer() {
+  const modal = document.getElementById('shortsModal');
+  if (modal) modal.classList.remove('open');
+  document.body.classList.remove('modal-open');
+
+  // Stop video playback by resetting src
+  const iframe = document.getElementById('shortsIframe');
+  if (iframe) iframe.src = '';
+}
+
+function navigateShort(delta) {
+  renderShortByIndex(currentShortIndex + delta);
+}
+
+function goToSpotFromShort(targetSpotId) {
+  const sid = targetSpotId || (currentShort && currentShort.spotId);
+  if (!sid) return;
+
+  closeShortsViewer();
+
+  // If on mobile, switch to feed tab first to show the card
+  if (window.innerWidth <= 860) {
+    setMobileTab('feed');
+  } else if (currentView === 'videos') {
+    setViewMode('split');
+  }
+
+  // Smooth scroll to the card and trigger map focus
+  setTimeout(() => {
+    const card = document.querySelector(`.spot-card[data-spot-id="${sid}"]`);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('pulse-highlight');
+      setTimeout(() => card.classList.remove('pulse-highlight'), 3600);
+    }
+    focusSpotOnMap(sid);
+  }, 120);
+
+  showToast('Ort auf Karte und im Atlas zentriert');
+}
+
+function toggleSaveFromShort() {
+  if (!currentShort) return;
+  toggleSave(currentShort.spotId);
+  const isSaved = savedIds.has(currentShort.spotId);
+  const saveBtn = document.getElementById('shortsSaveBtn');
+  const saveLabel = document.getElementById('shortsSaveLabel');
+  if (saveBtn) {
+    saveBtn.classList.toggle('saved', isSaved);
+    const svg = saveBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isSaved ? 'currentColor' : 'none');
+  }
+  if (saveLabel) {
+    saveLabel.textContent = isSaved ? 'Gemerkt' : 'Merken';
+  }
+}

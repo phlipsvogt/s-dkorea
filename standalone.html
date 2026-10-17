@@ -1721,6 +1721,458 @@ body.drawer-open {
   }
 }
 
+/* ==========================================================
+   SHORTS INTEGRATION & BIDIRECTIONAL SPOT VIEWER
+   ========================================================== */
+
+/* Badges on Cards and Actions */
+.card-short-badge {
+  position: absolute;
+  top: 10px;
+  right: 48px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.15s ease;
+}
+
+.card-short-badge:hover {
+  background: #E11D48;
+  color: #FFFFFF;
+  border-color: #E11D48;
+  transform: scale(1.05);
+}
+
+.btn-card-action.btn-short-link {
+  background: #FFF1F2;
+  color: #BE123C;
+  border-color: #FECDD3;
+  font-weight: 700;
+}
+
+.btn-card-action.btn-short-link:hover {
+  background: #E11D48;
+  color: #FFFFFF;
+  border-color: #E11D48;
+}
+
+/* Pulse animation on spot card when jumping from Short */
+@keyframes spotCardPulse {
+  0% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7); }
+  70% { box-shadow: 0 0 0 12px rgba(2, 132, 199, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+}
+
+.spot-card.pulse-highlight {
+  animation: spotCardPulse 1.2s ease-out 3;
+  border-color: var(--accent-ocean) !important;
+}
+
+/* Shorts Modal Backdrop */
+.shorts-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 29, 0.88);
+  backdrop-filter: blur(14px);
+  z-index: 350;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.shorts-modal-backdrop.open {
+  display: flex !important;
+}
+
+.shorts-modal-panel {
+  background: #0F172A;
+  color: #F8FAFC;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  max-width: 960px;
+  width: 100%;
+  max-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.shorts-modal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(15, 23, 42, 0.95);
+}
+
+.shorts-top-badge {
+  background: #E11D48;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.shorts-close-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.shorts-close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.08);
+}
+
+.shorts-content-wrap {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* 9:16 Video Player Area */
+.shorts-player-container {
+  position: relative;
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  min-height: 520px;
+}
+
+.shorts-iframe-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 9/16;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  background: #000000;
+}
+
+.shorts-iframe-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.shorts-player-controls {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  right: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.shorts-nav-arrow {
+  pointer-events: auto;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.shorts-nav-arrow:hover {
+  background: #0284C7;
+  transform: scale(1.1);
+}
+
+/* Spot Anchor Dock (Right side / Connected Place) */
+.shorts-spot-dock {
+  padding: 24px;
+  background: #0F172A;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.shorts-spot-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shorts-dock-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-ocean);
+}
+
+.shorts-creator-tag {
+  font-size: 0.76rem;
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+.shorts-spot-card {
+  background: #1E293B;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.shorts-spot-media {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #0F172A;
+}
+
+.shorts-spot-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shorts-spot-transit {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  font-size: 0.62rem;
+  background: rgba(15, 23, 42, 0.88);
+  color: #FFFFFF;
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.shorts-spot-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.shorts-spot-meta {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  font-weight: 600;
+}
+
+.shorts-spot-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 3px 0;
+  line-height: 1.3;
+}
+
+.shorts-spot-kr {
+  font-size: 0.82rem;
+  color: #38BDF8;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.shorts-spot-tip {
+  font-size: 0.78rem;
+  color: #CBD5E1;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shorts-dock-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-shorts-jump-map {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent-ocean);
+  color: #FFFFFF;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-shorts-jump-map:hover {
+  background: #0369A1;
+  transform: translateY(-1px);
+}
+
+.btn-shorts-action {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #1E293B;
+  color: #FFFFFF;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.btn-shorts-action:hover {
+  background: #334155;
+  border-color: #64748B;
+}
+
+.btn-shorts-action.saved {
+  background: #FFFFFF;
+  color: #0F172A;
+  border-color: #FFFFFF;
+}
+
+.btn-shorts-action.naver {
+  background: var(--naver-green-bg);
+  color: #047857;
+  border-color: #A7F3D0;
+  font-weight: 700;
+}
+
+.shorts-list-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94A3B8;
+  letter-spacing: 0.04em;
+  margin-top: 10px;
+}
+
+.shorts-thumbnails-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.shorts-thumb-item {
+  width: 72px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.15s ease;
+  background: #1E293B;
+  text-align: center;
+}
+
+.shorts-thumb-item:hover,
+.shorts-thumb-item.active {
+  border-color: #38BDF8;
+  transform: scale(1.05);
+}
+
+.shorts-thumb-item img {
+  width: 100%;
+  height: 52px;
+  object-fit: cover;
+}
+
+.shorts-thumb-item span {
+  display: block;
+  font-size: 0.65rem;
+  color: #CBD5E1;
+  padding: 3px 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Mobile responsive layout for Shorts Modal */
+@media (max-width: 860px) {
+  .shorts-modal-backdrop {
+    padding: 0;
+  }
+  .shorts-modal-panel {
+    border-radius: 0;
+    max-height: 100vh;
+    height: 100vh;
+  }
+  .shorts-content-wrap {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .shorts-player-container {
+    padding: 10px;
+    min-height: auto;
+  }
+  .shorts-iframe-wrapper {
+    max-width: 250px;
+  }
+  .shorts-spot-dock {
+    padding: 14px 16px 80px 16px;
+    gap: 12px;
+  }
+  .card-short-badge {
+    top: 8px;
+    right: 42px;
+    padding: 3px 6px;
+    font-size: 0.63rem;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1774,6 +2226,10 @@ body.drawer-open {
         <button class="nav-btn" id="viewBtnVideos" onclick="setViewMode('videos')">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
           4K Videos
+        </button>
+        <button class="nav-btn" id="viewBtnShorts" onclick="openShortsViewer()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="3"/><circle cx="12" cy="18" r="1"/><polygon points="10 8 15 11 10 14 10 8" fill="currentColor"/></svg>
+          Shorts Feed
         </button>
         <button class="nav-btn" id="viewBtnSaved" onclick="toggleSavedFilter()">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
@@ -2147,6 +2603,10 @@ body.drawer-open {
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
       <span>Karte</span>
     </button>
+    <button class="mobile-tab-btn" id="mobTabShorts" onclick="openShortsViewer()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="2" width="12" height="20" rx="3"/><circle cx="12" cy="18" r="1"/><polygon points="10 8 15 11 10 14 10 8" fill="currentColor"/></svg>
+      <span>Shorts</span>
+    </button>
     <button class="mobile-tab-btn" id="mobTabRoute" onclick="setMobileTab('route')">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg>
       <span>Route</span>
@@ -2156,6 +2616,87 @@ body.drawer-open {
       <span>Gemerkt (<span id="mobSavedBadge">0</span>)</span>
     </button>
   </nav>
+
+  <!-- SHORTS VIEWER MODAL (BIDIRECTIONAL: SHORT -> SPOT -> MAP) -->
+  <div class="shorts-modal-backdrop" id="shortsModal" onclick="if(event.target===this) closeShortsViewer()">
+    <div class="shorts-modal-panel">
+      <!-- Top header bar -->
+      <div class="shorts-modal-top">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div class="shorts-top-badge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Shorts
+          </div>
+          <span style="font-size:0.8rem; font-weight:700; color:#FFFFFF;" id="shortsCounter">1 / 12</span>
+        </div>
+        <button class="shorts-close-btn" onclick="closeShortsViewer()" title="Schließen">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Main Layout: Vertical Player (Left) + Spot Anchor Card (Right/Bottom) -->
+      <div class="shorts-content-wrap">
+        <!-- 9:16 Video Player Area -->
+        <div class="shorts-player-container">
+          <div class="shorts-iframe-wrapper">
+            <iframe id="shortsIframe" src="" title="Korea Travel Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          </div>
+
+          <!-- Video Navigation Buttons Floating On Video -->
+          <div class="shorts-player-controls">
+            <button class="shorts-nav-arrow prev" onclick="navigateShort(-1)" title="Vorheriges Short">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="shorts-nav-arrow next" onclick="navigateShort(1)" title="Nächstes Short">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Connected Spot Card (BIDIRECTIONAL ANCHOR) -->
+        <div class="shorts-spot-dock">
+          <div class="shorts-spot-header">
+            <span class="shorts-dock-label">Verknüpfter Ort im Atlas</span>
+            <span class="shorts-creator-tag" id="shortsCreator">@koreatravel</span>
+          </div>
+
+          <div class="shorts-spot-card" id="shortsSpotCard">
+            <div class="shorts-spot-media">
+              <img id="shortsSpotImg" src="" alt="" />
+              <span class="shorts-spot-transit" id="shortsSpotTransit"></span>
+            </div>
+            <div class="shorts-spot-info">
+              <div class="shorts-spot-meta" id="shortsSpotMeta">#103 • Suwon</div>
+              <h4 class="shorts-spot-title" id="shortsSpotTitle">Starfield Suwon Byeolmadang Library</h4>
+              <div class="shorts-spot-kr" id="shortsSpotKr">스타필드 수원 별마당 도서관</div>
+              <p class="shorts-spot-tip" id="shortsSpotTip"></p>
+            </div>
+          </div>
+
+          <!-- 1-Click Action to Jump to Spot & Map! -->
+          <div class="shorts-dock-actions">
+            <button class="btn-shorts-jump-map" id="shortsJumpMapBtn" onclick="goToSpotFromShort()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+              <span>Ort im Atlas & Karte anzeigen</span>
+            </button>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-shorts-action" id="shortsSaveBtn" onclick="toggleSaveFromShort()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                <span id="shortsSaveLabel">Merken</span>
+              </button>
+              <a id="shortsNaverBtn" href="#" target="_blank" rel="noopener" class="btn-shorts-action naver">
+                <span>Naver Map</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Thumbnails Strip to switch between Shorts -->
+          <div class="shorts-list-title">Weitere Video-Shorts nach Orten</div>
+          <div class="shorts-thumbnails-strip" id="shortsThumbsStrip"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- TOAST -->
   <div class="toast" id="toastMsg">In Zwischenablage kopiert</div>
@@ -7549,6 +8090,124 @@ let routeIds = [1, 2, 3, 7];
 let currentFiltered = [...ALL_SPOTS];
 
 // ==========================================================
+// CURATED SHORTS & SHORT-FORM VIDEO DATASET (12 HIGHLIGHTS)
+// ==========================================================
+const SPOT_SHORTS = [
+  {
+    id: 'short-103',
+    spotId: 103,
+    title: 'Starfield Suwon Byeolmadang Library',
+    youtubeId: 'JisPmmz9Zc0',
+    creator: '@koreatravel',
+    highlight: 'Riesige mehrstöckige Zirkular-Bibliothek & Vinyl-Lounge',
+    duration: '0:35'
+  },
+  {
+    id: 'short-38',
+    spotId: 38,
+    title: 'Songdo Central Park & G-Tower Views',
+    youtubeId: 'KT1ABO6ESKg',
+    creator: '@incheonlife',
+    highlight: 'Futuristische Skyline, Mond-Boote & Rehe mitten im Park',
+    duration: '0:28'
+  },
+  {
+    id: 'short-183',
+    spotId: 183,
+    title: 'Haeundae Blueline Park Sky Capsule',
+    youtubeId: 'xUpZ8UgTgVQ',
+    creator: '@busanvibes',
+    highlight: 'Bunte Sky-Kapseln direkt an der Klippenküste von Busan',
+    duration: '0:30'
+  },
+  {
+    id: 'short-138',
+    spotId: 138,
+    title: 'Gwangjang Market Food Tour',
+    youtubeId: '8PO_du6w8lw',
+    creator: '@seoulfoodie',
+    highlight: 'Knusprige Bindaetteok, Mayak Gimbap & scharfes Tteokbokki',
+    duration: '0:45'
+  },
+  {
+    id: 'short-121',
+    spotId: 121,
+    title: 'Gyeongbokgung Palace Royal Guard Walk',
+    youtubeId: 'zIkNnC3_x4w',
+    creator: '@historickorea',
+    highlight: 'Traditionelle Wachablösung & Palastarchitektur von 1395',
+    duration: '0:40'
+  },
+  {
+    id: 'short-130',
+    spotId: 130,
+    title: 'Seongsu-dong Cafe & Pop-Up Scene',
+    youtubeId: 'TDRC3DMo1gQ',
+    creator: '@trendseoul',
+    highlight: 'Industrie-Loft-Cafés, Nudake Peak Cake & Dior Pavillon',
+    duration: '0:32'
+  },
+  {
+    id: 'short-44',
+    spotId: 44,
+    title: 'Incheon Chinatown & Jajangmyeon',
+    youtubeId: '7k_IEuPW0hI',
+    creator: '@incheontour',
+    highlight: 'Historisches Paeru-Tor, Geburtsort des koreanischen Jajangmyeon',
+    duration: '0:30'
+  },
+  {
+    id: 'short-31',
+    spotId: 31,
+    title: 'Joyangbangjik Textile Factory Cafe',
+    youtubeId: 'orqx67XLfDo',
+    creator: '@ganghwatrip',
+    highlight: 'Alte Weberei von 1933 verwandelt in Retro-Museums-Café',
+    duration: '0:45'
+  },
+  {
+    id: 'short-2',
+    spotId: 2,
+    title: 'Inha Backgate Student Food Alley',
+    youtubeId: '1ZK348wy5Eg',
+    creator: '@inhalocal',
+    highlight: 'Günstiges Samgyeopsal, Tonkatsu & Bars direkt am Campus',
+    duration: '0:35'
+  },
+  {
+    id: 'short-41',
+    spotId: 41,
+    title: 'Sinpo International Market Dakgangjeong',
+    youtubeId: 'ZMCX1kvw91g',
+    creator: '@incheonbites',
+    highlight: 'Berühmtes süß-scharf glasiertes Fried Chicken',
+    duration: '0:35'
+  },
+  {
+    id: 'short-43',
+    spotId: 43,
+    title: 'Wolmido Island Sunset Pier',
+    youtubeId: '1ZK348wy5Eg',
+    creator: '@incheonlife',
+    highlight: 'Meerpromenade, Disco Pang Pang & Westmeer-Sonnenuntergang',
+    duration: '0:40'
+  },
+  {
+    id: 'short-181',
+    spotId: 181,
+    title: 'Busan Gamcheon Culture Village',
+    youtubeId: 'yBGtdnfdte0',
+    creator: '@visitkorea',
+    highlight: 'Bunte Häuser an den Hügeln & Fotospot mit dem Kleinen Prinzen',
+    duration: '0:35'
+  }
+];
+
+function getShortForSpot(spotId) {
+  return SPOT_SHORTS.find(s => s.spotId === spotId) || null;
+}
+
+// ==========================================================
 // 1. REAL PLACE PHOTO ENGINE (Wikipedia KO/EN + Wikimedia Commons)
 // ==========================================================
 let realPhotoCache = {};
@@ -7964,12 +8623,18 @@ function updateMapMarkers(spots) {
     const naverUrl = getNaverUrl(s.kr);
     const googlePhotosUrl = getGooglePhotosUrl(s.kr, s.name);
     const isSaved = savedIds.has(s.id);
+    const spotShort = getShortForSpot(s.id);
 
     const popupHtml = `
       <div style="font-family:'Inter',sans-serif;">
         <div style="height:135px; width:100%; background:#0F172A; position:relative; overflow:hidden;">
           <img id="popup-img-${s.id}" src="${s.img}" alt="${s.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://plus.unsplash.com/premium_photo-1661886333708-877148b43ae1?fm=jpg&q=80&w=1000&auto=format&fit=crop'" />
           <span style="position:absolute; top:8px; left:8px; background:rgba(15,23,42,0.85); color:#fff; font-size:0.68rem; font-weight:600; padding:3px 8px; border-radius:99px;">${s.transitTime}</span>
+          ${spotShort ? `
+          <button class="card-short-badge" onclick="openShortsViewer('${spotShort.id}', event)" title="Short ansehen" style="top:8px; right:42px; padding:3px 7px;">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Short</span>
+          </button>` : ''}
           <button class="save-btn ${isSaved ? 'saved' : ''}" id="popup-save-img-btn-${s.id}" onclick="toggleSave(${s.id}, event)" title="Auf Merkliste speichern" style="position:absolute; top:8px; right:8px; width:30px; height:30px; z-index:10;">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
           </button>
@@ -7984,6 +8649,11 @@ function updateMapMarkers(spots) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
               <span>${isSaved ? 'Gemerkt' : 'Merken'}</span>
             </button>
+            ${spotShort ? `
+            <button class="btn-card-action btn-short-link" style="font-size:0.7rem; padding:4px 7px;" onclick="openShortsViewer('${spotShort.id}', event)" title="Short ansehen">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>Short</span>
+            </button>` : ''}
             <a href="${naverUrl}" target="_blank" rel="noopener" class="btn-naver" style="font-size:0.7rem; padding:4px 8px;">Naver Map</a>
             <a href="${googlePhotosUrl}" target="_blank" rel="noopener" class="btn-google-photos" style="font-size:0.7rem; padding:4px 8px;">Google Fotos</a>
             <button class="btn-card-action" style="font-size:0.7rem; padding:4px 7px;" onclick="addToRoute(${s.id})">+ Route</button>
@@ -8433,6 +9103,7 @@ function renderCards(list) {
     const imgUrl = realPhotoCache[s.id] || s.img;
     const naverUrl = getNaverUrl(s.kr);
     const googlePhotosUrl = getGooglePhotosUrl(s.kr, s.name);
+    const spotShort = getShortForSpot(s.id);
 
     return `
     <article class="spot-card" data-spot-id="${s.id}" onmouseenter="highlightPinOnHover(${s.id})" onmouseleave="unhighlightPinOnHover(${s.id})">
@@ -8442,6 +9113,11 @@ function renderCards(list) {
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           ${s.transitTime}
         </div>
+        ${spotShort ? `
+        <button class="card-short-badge" onclick="openShortsViewer('${spotShort.id}', event)" title="Short-Video ansehen">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <span>Short</span>
+        </button>` : ''}
         <button class="save-btn ${isSaved ? 'saved' : ''}" onclick="toggleSave(${s.id}, event)" title="Merken">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </button>
@@ -8482,7 +9158,12 @@ function renderCards(list) {
       </div>
 
       <div class="card-footer">
-        <div style="display:flex; gap:5px; flex-wrap:wrap;">
+        <div style="display:flex; gap:5px; flex-wrap:wrap; align-items:center;">
+          ${spotShort ? `
+          <button class="btn-card-action btn-short-link" onclick="openShortsViewer('${spotShort.id}', event)" title="Short-Video abspielen">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <span>Short</span>
+          </button>` : ''}
           <a href="${naverUrl}" target="_blank" rel="noopener" class="btn-naver" title="Direkt in Naver Map öffnen">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             Naver
@@ -8621,11 +9302,17 @@ function openModal(id) {
   `;
 
   const isSaved = savedIds.has(s.id);
+  const spotShort = getShortForSpot(s.id);
   document.getElementById('modalActions').innerHTML = `
     <button id="modal-save-btn-${s.id}" class="btn-secondary-link ${isSaved ? 'saved' : ''}" style="${isSaved ? 'background:var(--text-primary); color:#FFFFFF; border-color:var(--text-primary);' : ''} display:inline-flex; align-items:center; gap:6px;" onclick="toggleSave(${s.id}, event)">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       <span>${isSaved ? 'Gemerkt' : 'Auf Merkliste'}</span>
     </button>
+    ${spotShort ? `
+    <button class="btn-secondary-link btn-short-link" style="display:inline-flex; align-items:center; gap:6px; background:#FFF1F2; color:#BE123C; border-color:#FECDD3; font-weight:700;" onclick="closeModal(); openShortsViewer('${spotShort.id}', event)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span>Short-Video ansehen</span>
+    </button>` : ''}
     <a href="${getNaverUrl(s.kr)}" target="_blank" rel="noopener" class="btn-primary-naver">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       In Naver Map öffnen (${s.kr})
@@ -8658,7 +9345,11 @@ function closeModal() {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') {
+    closeModal();
+    closeShortsViewer();
+    toggleMobileFilterDrawer(false);
+  }
 });
 
 function ensureMapReady() {
@@ -8808,6 +9499,176 @@ window.addEventListener('scroll', () => {
   }
   lastMobileScrollY = Math.max(0, currentY);
 }, { passive: true });
+
+// ==========================================================
+// BIDIRECTIONAL SHORTS VIEWER & DISCOVERY ENGINE
+// ==========================================================
+let currentShortIndex = 0;
+let currentShort = SPOT_SHORTS[0];
+
+function openShortsViewer(shortIdOrSpotId, ev) {
+  if (ev) ev.stopPropagation();
+
+  let targetIndex = 0;
+  if (typeof shortIdOrSpotId === 'number') {
+    const idx = SPOT_SHORTS.findIndex(s => s.spotId === shortIdOrSpotId);
+    targetIndex = idx >= 0 ? idx : 0;
+  } else if (typeof shortIdOrSpotId === 'string') {
+    const idx = SPOT_SHORTS.findIndex(s => s.id === shortIdOrSpotId);
+    targetIndex = idx >= 0 ? idx : 0;
+  }
+
+  currentShortIndex = targetIndex;
+  renderShortByIndex(currentShortIndex);
+
+  const modal = document.getElementById('shortsModal');
+  if (modal) modal.classList.add('open');
+  document.body.classList.add('modal-open');
+}
+
+function renderShortByIndex(index) {
+  if (index < 0) index = SPOT_SHORTS.length - 1;
+  if (index >= SPOT_SHORTS.length) index = 0;
+  currentShortIndex = index;
+  currentShort = SPOT_SHORTS[index];
+
+  const spot = ALL_SPOTS.find(x => x.id === currentShort.spotId) || ALL_SPOTS[0];
+
+  // Update Iframe Player
+  const iframe = document.getElementById('shortsIframe');
+  if (iframe) {
+    const embedUrl = `https://www.youtube.com/embed/${currentShort.youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+    if (iframe.src !== embedUrl) {
+      iframe.src = embedUrl;
+    }
+  }
+
+  // Update Counter and Creator
+  const counterEl = document.getElementById('shortsCounter');
+  if (counterEl) counterEl.textContent = `${index + 1} / ${SPOT_SHORTS.length}`;
+
+  const creatorEl = document.getElementById('shortsCreator');
+  if (creatorEl) creatorEl.textContent = currentShort.creator;
+
+  // Update Connected Spot Info
+  const spotImg = document.getElementById('shortsSpotImg');
+  if (spotImg) {
+    spotImg.src = realPhotoCache[spot.id] || spot.img;
+    spotImg.alt = spot.name;
+  }
+
+  const spotTransit = document.getElementById('shortsSpotTransit');
+  if (spotTransit) spotTransit.textContent = spot.transitTime;
+
+  const spotMeta = document.getElementById('shortsSpotMeta');
+  if (spotMeta) spotMeta.textContent = `#${spot.id} • ${spot.region} • ${spot.category}`;
+
+  const spotTitle = document.getElementById('shortsSpotTitle');
+  if (spotTitle) spotTitle.textContent = spot.name;
+
+  const spotKr = document.getElementById('shortsSpotKr');
+  if (spotKr) spotKr.textContent = spot.kr;
+
+  const spotTip = document.getElementById('shortsSpotTip');
+  if (spotTip) spotTip.textContent = currentShort.highlight || spot.tip;
+
+  // Update Save Button
+  const isSaved = savedIds.has(spot.id);
+  const saveBtn = document.getElementById('shortsSaveBtn');
+  const saveLabel = document.getElementById('shortsSaveLabel');
+  if (saveBtn) {
+    saveBtn.classList.toggle('saved', isSaved);
+    const svg = saveBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isSaved ? 'currentColor' : 'none');
+  }
+  if (saveLabel) {
+    saveLabel.textContent = isSaved ? 'Gemerkt' : 'Merken';
+  }
+
+  // Update Naver Button
+  const naverBtn = document.getElementById('shortsNaverBtn');
+  if (naverBtn) {
+    naverBtn.href = getNaverUrl(spot.kr);
+  }
+
+  // Render Thumbnails Strip
+  renderShortsThumbnails();
+}
+
+function renderShortsThumbnails() {
+  const strip = document.getElementById('shortsThumbsStrip');
+  if (!strip) return;
+
+  strip.innerHTML = SPOT_SHORTS.map((sh, idx) => {
+    const sp = ALL_SPOTS.find(x => x.id === sh.spotId);
+    if (!sp) return '';
+    const imgSrc = realPhotoCache[sp.id] || sp.img;
+    const isActive = idx === currentShortIndex;
+    return `
+      <div class="shorts-thumb-item ${isActive ? 'active' : ''}" onclick="renderShortByIndex(${idx})">
+        <img src="${imgSrc}" alt="${sp.name}" />
+        <span>${sp.name.split(' ')[0]}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function closeShortsViewer() {
+  const modal = document.getElementById('shortsModal');
+  if (modal) modal.classList.remove('open');
+  document.body.classList.remove('modal-open');
+
+  // Stop video playback by resetting src
+  const iframe = document.getElementById('shortsIframe');
+  if (iframe) iframe.src = '';
+}
+
+function navigateShort(delta) {
+  renderShortByIndex(currentShortIndex + delta);
+}
+
+function goToSpotFromShort(targetSpotId) {
+  const sid = targetSpotId || (currentShort && currentShort.spotId);
+  if (!sid) return;
+
+  closeShortsViewer();
+
+  // If on mobile, switch to feed tab first to show the card
+  if (window.innerWidth <= 860) {
+    setMobileTab('feed');
+  } else if (currentView === 'videos') {
+    setViewMode('split');
+  }
+
+  // Smooth scroll to the card and trigger map focus
+  setTimeout(() => {
+    const card = document.querySelector(`.spot-card[data-spot-id="${sid}"]`);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('pulse-highlight');
+      setTimeout(() => card.classList.remove('pulse-highlight'), 3600);
+    }
+    focusSpotOnMap(sid);
+  }, 120);
+
+  showToast('Ort auf Karte und im Atlas zentriert');
+}
+
+function toggleSaveFromShort() {
+  if (!currentShort) return;
+  toggleSave(currentShort.spotId);
+  const isSaved = savedIds.has(currentShort.spotId);
+  const saveBtn = document.getElementById('shortsSaveBtn');
+  const saveLabel = document.getElementById('shortsSaveLabel');
+  if (saveBtn) {
+    saveBtn.classList.toggle('saved', isSaved);
+    const svg = saveBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isSaved ? 'currentColor' : 'none');
+  }
+  if (saveLabel) {
+    saveLabel.textContent = isSaved ? 'Gemerkt' : 'Merken';
+  }
+}
 
 </script>
 </body>
