@@ -650,6 +650,12 @@
       color: var(--text-primary);
     }
 
+    .btn-card-action.saved {
+      background: var(--text-primary);
+      color: #FFFFFF;
+      border-color: var(--text-primary);
+    }
+
     /* RIGHT STICKY DOCK: INTERACTIVE MAP + ROUTE PLANNER */
     .right-dock {
       background: var(--bg-surface);
@@ -795,7 +801,7 @@
 
     .leaflet-popup-content {
       margin: 0 !important;
-      width: 270px !important;
+      width: 285px !important;
     }
 
     /* ROUTE PLANNER PANEL */
@@ -7957,12 +7963,16 @@ function updateMapMarkers(spots) {
     const marker = L.marker([s.lat, s.lng], { icon: pinIcon });
     const naverUrl = getNaverUrl(s.kr);
     const googlePhotosUrl = getGooglePhotosUrl(s.kr, s.name);
+    const isSaved = savedIds.has(s.id);
 
     const popupHtml = `
       <div style="font-family:'Inter',sans-serif;">
         <div style="height:135px; width:100%; background:#0F172A; position:relative; overflow:hidden;">
           <img id="popup-img-${s.id}" src="${s.img}" alt="${s.name}" style="width:100%; height:100%; object-fit:cover;" onerror="this.src='https://plus.unsplash.com/premium_photo-1661886333708-877148b43ae1?fm=jpg&q=80&w=1000&auto=format&fit=crop'" />
           <span style="position:absolute; top:8px; left:8px; background:rgba(15,23,42,0.85); color:#fff; font-size:0.68rem; font-weight:600; padding:3px 8px; border-radius:99px;">${s.transitTime}</span>
+          <button class="save-btn ${isSaved ? 'saved' : ''}" id="popup-save-img-btn-${s.id}" onclick="toggleSave(${s.id}, event)" title="Auf Merkliste speichern" style="position:absolute; top:8px; right:8px; width:30px; height:30px; z-index:10;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          </button>
         </div>
         <div style="padding:12px;">
           <div style="font-size:0.7rem; color:#64748B; font-weight:600;">#${s.id} • ${s.region} • ★ ${s.rating}</div>
@@ -7970,6 +7980,10 @@ function updateMapMarkers(spots) {
           <div style="font-size:0.78rem; color:#475569; font-weight:600; margin-bottom:6px;">${s.kr}</div>
           <p style="font-size:0.76rem; color:#475569; margin-bottom:10px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${s.desc}</p>
           <div style="display:flex; flex-wrap:wrap; gap:5px;">
+            <button id="popup-save-btn-${s.id}" class="btn-card-action ${isSaved ? 'saved' : ''}" style="font-size:0.7rem; padding:4px 8px; display:inline-flex; align-items:center; gap:4px;" onclick="toggleSave(${s.id}, event)" title="Auf Merkliste speichern">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+              <span>${isSaved ? 'Gemerkt' : 'Merken'}</span>
+            </button>
             <a href="${naverUrl}" target="_blank" rel="noopener" class="btn-naver" style="font-size:0.7rem; padding:4px 8px;">Naver Map</a>
             <a href="${googlePhotosUrl}" target="_blank" rel="noopener" class="btn-google-photos" style="font-size:0.7rem; padding:4px 8px;">Google Fotos</a>
             <button class="btn-card-action" style="font-size:0.7rem; padding:4px 7px;" onclick="addToRoute(${s.id})">+ Route</button>
@@ -7983,6 +7997,21 @@ function updateMapMarkers(spots) {
     marker.on('popupopen', () => {
       if (!realPhotoCache[s.id]) {
         fetchSingleSpotRealPhoto(s);
+      }
+      const currentlySaved = savedIds.has(s.id);
+      const pBtn = document.getElementById(`popup-save-btn-${s.id}`);
+      if (pBtn) {
+        pBtn.classList.toggle('saved', currentlySaved);
+        const svg = pBtn.querySelector('svg');
+        if (svg) svg.setAttribute('fill', currentlySaved ? 'currentColor' : 'none');
+        const span = pBtn.querySelector('span');
+        if (span) span.textContent = currentlySaved ? 'Gemerkt' : 'Merken';
+      }
+      const pImgBtn = document.getElementById(`popup-save-img-btn-${s.id}`);
+      if (pImgBtn) {
+        pImgBtn.classList.toggle('saved', currentlySaved);
+        const svg = pImgBtn.querySelector('svg');
+        if (svg) svg.setAttribute('fill', currentlySaved ? 'currentColor' : 'none');
       }
     });
 
@@ -8126,16 +8155,64 @@ function copyText(text) {
 
 function toggleSave(id, ev) {
   if (ev) ev.stopPropagation();
-  if (savedIds.has(id)) {
-    savedIds.delete(id);
-    showToast('Aus Merkliste entfernt');
-  } else {
+  const isNowSaved = !savedIds.has(id);
+  if (isNowSaved) {
     savedIds.add(id);
     showToast('Zur Merkliste hinzugefügt');
+  } else {
+    savedIds.delete(id);
+    showToast('Aus Merkliste entfernt');
   }
   localStorage.setItem('inha_saved_spots', JSON.stringify([...savedIds]));
   updateSavedBadge();
-  applyFilters(false);
+
+  // Update card save button if present on page
+  const cardBtns = document.querySelectorAll(`.spot-card[data-spot-id="${id}"] .save-btn`);
+  cardBtns.forEach(btn => {
+    btn.classList.toggle('saved', isNowSaved);
+    const svg = btn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isNowSaved ? 'currentColor' : 'none');
+  });
+
+  // Update popup save buttons if popup is currently open
+  const popupBtn = document.getElementById(`popup-save-btn-${id}`);
+  if (popupBtn) {
+    popupBtn.classList.toggle('saved', isNowSaved);
+    const svg = popupBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isNowSaved ? 'currentColor' : 'none');
+    const span = popupBtn.querySelector('span');
+    if (span) span.textContent = isNowSaved ? 'Gemerkt' : 'Merken';
+  }
+  const popupImgBtn = document.getElementById(`popup-save-img-btn-${id}`);
+  if (popupImgBtn) {
+    popupImgBtn.classList.toggle('saved', isNowSaved);
+    const svg = popupImgBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isNowSaved ? 'currentColor' : 'none');
+  }
+
+  // Update modal save button if modal is open
+  const modalBtn = document.getElementById(`modal-save-btn-${id}`);
+  if (modalBtn) {
+    modalBtn.classList.toggle('saved', isNowSaved);
+    if (isNowSaved) {
+      modalBtn.style.background = 'var(--text-primary)';
+      modalBtn.style.color = '#FFFFFF';
+      modalBtn.style.borderColor = 'var(--text-primary)';
+    } else {
+      modalBtn.style.background = 'var(--bg-surface)';
+      modalBtn.style.color = 'var(--text-primary)';
+      modalBtn.style.borderColor = 'var(--border-light)';
+    }
+    const svg = modalBtn.querySelector('svg');
+    if (svg) svg.setAttribute('fill', isNowSaved ? 'currentColor' : 'none');
+    const span = modalBtn.querySelector('span');
+    if (span) span.textContent = isNowSaved ? 'Gemerkt' : 'Auf Merkliste';
+  }
+
+  // If currently filtering only saved spots, refresh the list
+  if (onlySaved) {
+    applyFilters(false);
+  }
 }
 
 function updateSavedBadge() {
@@ -8543,7 +8620,12 @@ function openModal(id) {
     ${s.isHiddenGem ? '<span class="mini-tag gem">Hidden Gem</span>' : ''}
   `;
 
+  const isSaved = savedIds.has(s.id);
   document.getElementById('modalActions').innerHTML = `
+    <button id="modal-save-btn-${s.id}" class="btn-secondary-link ${isSaved ? 'saved' : ''}" style="${isSaved ? 'background:var(--text-primary); color:#FFFFFF; border-color:var(--text-primary);' : ''} display:inline-flex; align-items:center; gap:6px;" onclick="toggleSave(${s.id}, event)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="${isSaved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      <span>${isSaved ? 'Gemerkt' : 'Auf Merkliste'}</span>
+    </button>
     <a href="${getNaverUrl(s.kr)}" target="_blank" rel="noopener" class="btn-primary-naver">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
       In Naver Map öffnen (${s.kr})

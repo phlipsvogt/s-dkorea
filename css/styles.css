@@ -638,6 +638,12 @@
       color: var(--text-primary);
     }
 
+    .btn-card-action.saved {
+      background: var(--text-primary);
+      color: #FFFFFF;
+      border-color: var(--text-primary);
+    }
+
     /* RIGHT STICKY DOCK: INTERACTIVE MAP + ROUTE PLANNER */
     .right-dock {
       background: var(--bg-surface);
@@ -783,7 +789,7 @@
 
     .leaflet-popup-content {
       margin: 0 !important;
-      width: 270px !important;
+      width: 285px !important;
     }
 
     /* ROUTE PLANNER PANEL */
