@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
   <title>Yeojeong — South Korea Travel Atlas from Inha University</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -200,28 +201,28 @@
       <div class="video-grid" id="videoView">
         <div class="video-card">
           <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/1ZK348wy5Eg" title="Seoul to Incheon Travel Guide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/1ZK348wy5Eg" title="Seoul to Incheon Travel Guide" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
           <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Incheon & Greater Seoul Highlights</h3>
           <p style="font-size:0.84rem; color:var(--text-secondary);">Visueller Guide durch Songdo Central Park, Open Port Chinatown, Wolmido und die direkten Verbindungen nach Seoul.</p>
         </div>
         <div class="video-card">
           <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/ZMCX1kvw91g" title="Incheon Gaehangro Retro Street" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/ZMCX1kvw91g" title="Incheon Gaehangro Retro Street" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
           <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Incheon Gaehangro (개항로) Retro Hipster Tour</h3>
           <p style="font-size:0.84rem; color:var(--text-secondary);">Einblick in die umgebauten Kliniken, das Ilkwang Lightbulb Cafe und die lokalen Lokale nur 15 Minuten von der Inha Uni entfernt.</p>
         </div>
         <div class="video-card">
           <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/orqx67XLfDo" title="Ganghwado & Yeongjongdo Cafe Tour" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/orqx67XLfDo" title="Ganghwado & Yeongjongdo Cafe Tour" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
           <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">Ganghwado & Yeongjongdo Island Cafes</h3>
           <p style="font-size:0.84rem; color:var(--text-secondary);">Die schönsten Küsten- und Fabrik-Cafés (inkl. Joyangbangjik) auf den Inseln vor Incheon.</p>
         </div>
         <div class="video-card">
           <div style="aspect-ratio:16/9; background:#0F172A; border-radius:8px; overflow:hidden; margin-bottom:12px;">
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/yBGtdnfdte0" title="South Korea Nationwide Highlights" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="100%" height="100%" src="https://www.youtube-nocookie.com/embed/yBGtdnfdte0" title="South Korea Nationwide Highlights" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
           </div>
           <h3 style="font-size:1rem; font-weight:700; margin-bottom:4px;">South Korea Nationwide: Seoul, Busan, Jeju & Incheon</h3>
           <p style="font-size:0.84rem; color:var(--text-secondary);">Inspiration für deine Wochenend- und Semesterferien-Trips quer durch Südkorea.</p>
@@ -475,7 +476,15 @@
         <!-- 9:16 Video Player Area -->
         <div class="shorts-player-container">
           <div class="shorts-iframe-wrapper">
-            <iframe id="shortsIframe" src="" title="Korea Travel Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe id="shortsIframe" src="" title="Korea Travel Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+          </div>
+
+          <!-- Direct YouTube button & fallback -->
+          <div class="shorts-player-footer">
+            <a id="shortsDirectYtLink" href="#" target="_blank" rel="noopener" class="shorts-yt-direct-btn">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#FF0000"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><polygon points="9.545 15.568 15.818 12 9.545 8.432" fill="#FFFFFF"/></svg>
+              <span>Auf YouTube ansehen</span>
+            </a>
           </div>
 
           <!-- Video Navigation Buttons Floating On Video -->

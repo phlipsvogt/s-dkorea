@@ -54,7 +54,7 @@ const SPOT_SHORTS = [
     id: 'short-121',
     spotId: 121,
     title: 'Gyeongbokgung Palace Royal Guard Walk',
-    youtubeId: 'zIkNnC3_x4w',
+    youtubeId: 'xOhc7Zst2rk',
     creator: '@historickorea',
     highlight: 'Traditionelle Wachablösung & Palastarchitektur von 1395',
     duration: '0:40'
@@ -1455,13 +1455,20 @@ function renderShortByIndex(index) {
 
   const spot = ALL_SPOTS.find(x => x.id === currentShort.spotId) || ALL_SPOTS[0];
 
-  // Update Iframe Player
+  // Update Iframe Player with youtube-nocookie and verified origin
   const iframe = document.getElementById('shortsIframe');
   if (iframe) {
-    const embedUrl = `https://www.youtube.com/embed/${currentShort.youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1`;
+    const origin = (window.location.protocol.startsWith('http')) ? window.location.origin : 'https://www.youtube.com';
+    const embedUrl = `https://www.youtube-nocookie.com/embed/${currentShort.youtubeId}?autoplay=1&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&origin=${encodeURIComponent(origin)}`;
     if (iframe.src !== embedUrl) {
       iframe.src = embedUrl;
     }
+  }
+
+  // Update Direct YouTube Link
+  const directLink = document.getElementById('shortsDirectYtLink');
+  if (directLink) {
+    directLink.href = `https://www.youtube.com/shorts/${currentShort.youtubeId}`;
   }
 
   // Update Counter and Creator
